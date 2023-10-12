@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.xpression.test.LiteralsTests" tests="8" skipped="0" failures="0" errors="0" timestamp="2023-10-19T00:32:07" hostname="Abhijits-MacBook-Pro.local" time="0.043">
+  <properties/>
+  <testcase name="testNullParsing()" classname="com.xpression.test.LiteralsTests" time="0.001"/>
+  <testcase name="testBooleanParsing()" classname="com.xpression.test.LiteralsTests" time="0.001"/>
+  <testcase name="testNumberParsing()" classname="com.xpression.test.LiteralsTests" time="0.001"/>
+  <testcase name="testTextParsing()" classname="com.xpression.test.LiteralsTests" time="0.002"/>
+  <testcase name="testNullParsing()" classname="com.xpression.test.LiteralsTests" time="0.0"/>
+  <testcase name="testBooleanParsing()" classname="com.xpression.test.LiteralsTests" time="0.001"/>
+  <testcase name="testNumberParsing()" classname="com.xpression.test.LiteralsTests" time="0.0"/>
+  <testcase name="testTextParsing()" classname="com.xpression.test.LiteralsTests" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

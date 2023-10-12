@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Xpression.iml" filepath="$PROJECT_DIR$/.idea/Xpression.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.iml" filepath="$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.main.iml" filepath="$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.test.iml" filepath="$PROJECT_DIR$/.idea/modules/xpression/Xpression.xpression.test.iml" />
+    </modules>
+  </component>
+</project>
