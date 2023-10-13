@@ -1,0 +1,67 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'antlr'
+    id 'maven-publish'
+    id 'com.jfrog.artifactory'
+}
+
+def snapshot = false
+group = "com.xpression"
+version = "0.0.1"
+
+sourceSets {
+    main {
+        java {
+            srcDir("${project.projectDir}/build/generated/")
+        }
+        kotlin {
+            srcDir 'src/main/kotlin'
+        }
+    }
+    test {
+        kotlin {
+            srcDir 'src/test/kotlin'
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+compileKotlin {
+//    doFirst { destinationDir = compileJava.destinationDir }
+    kotlinOptions.jvmTarget = "1.8"
+    dependsOn generateGrammarSource
+}
+
+compileTestKotlin {
+//    doFirst { destinationDir = compileTestJava.destinationDir }
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    outputDirectory = new File("${project.projectDir}/build/generated/antlr/com/xpression/internal")
+    arguments += ["-package", "com.xpression.internal", "-visitor"]
+}
+
+dependencies {
+    antlr libs.antlr4
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+//    testImplementation libs.gson
+//    testImplementation libs.junit.jupiter.engine
+//    testImplementation libs.junit.jupiter.params
+//    testImplementation libs.junit.vintage.engine
+//    testImplementation libs.junit.platform.runner
+}
+
+test {
+    useJUnitPlatform()
+}
+
+artifactoryPublish {
+    dependsOn build
+}

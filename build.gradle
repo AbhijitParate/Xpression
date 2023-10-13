@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        google()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.23.4"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        google()
+    }
+}
+
+tasks.register("clean",Delete){
+    delete("${rootProject.projectDir}/build")
+}
