@@ -13,8 +13,7 @@ enum class DataType(val type: String) {
     Array(Abstract.ARRAY),
     List(Abstract.LIST),
     Set(Abstract.SET),
-    Object(Abstract.OBJECT)
-    ;
+    Object(Abstract.OBJECT);
 
     companion object {
         object Primitive {
@@ -35,7 +34,7 @@ enum class DataType(val type: String) {
         }
 
         fun DataType?.orNone(): DataType {
-            return this ?: DataType.None
+            return this ?: None
         }
     }
 }
