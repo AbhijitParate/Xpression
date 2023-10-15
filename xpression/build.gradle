@@ -27,8 +27,8 @@ sourceSets {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 compileKotlin {
@@ -44,18 +44,17 @@ compileTestKotlin {
 
 generateGrammarSource {
     maxHeapSize = "64m"
-    outputDirectory = new File("${project.projectDir}/build/generated/antlr/com/xpression/internal")
+    outputDirectory = new File("${project.projectDir}/build/generated/com/xpression/internal")
     arguments += ["-package", "com.xpression.internal", "-visitor"]
 }
 
 dependencies {
     antlr libs.antlr4
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
-//    testImplementation libs.gson
-//    testImplementation libs.junit.jupiter.engine
-//    testImplementation libs.junit.jupiter.params
-//    testImplementation libs.junit.vintage.engine
-//    testImplementation libs.junit.platform.runner
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 test {

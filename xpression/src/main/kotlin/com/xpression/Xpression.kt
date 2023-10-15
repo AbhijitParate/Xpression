@@ -1,7 +1,8 @@
 package com.xpression
 
+import com.xpression.internal.ExpressionLexer
 import com.xpression.internal.ExpressionParser
-import com.xpression.internal.ExpressionVisitor
+import com.xpression.internal.XpressionVisitor
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
@@ -22,7 +23,7 @@ class Xpression(private val expression: String) {
     private val errorListener by lazy { ExpressionErrorListener() }
 
     fun evaluate(context: XpressionContext): Result {
-        return ExpressionVisitor(context).visit(parseTree)
+        return XpressionVisitor(context).visit(parseTree)
     }
 
     companion object {

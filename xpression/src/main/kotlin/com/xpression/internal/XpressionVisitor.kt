@@ -1,14 +1,12 @@
 package com.xpression.internal
 
-import com.xpression.ExpressionBaseVisitor
-import com.xpression.ExpressionParser
 import com.xpression.Result
 import com.xpression.XpressionContext
 import com.xpression.internal.Converter.toNegativeNumber
 import com.xpression.internal.Converter.toPositiveNumber
 import org.antlr.v4.runtime.tree.ParseTree
 
-class ExpressionVisitor(
+class XpressionVisitor(
     private val context: XpressionContext
 ) : ExpressionBaseVisitor<Result>() {
 

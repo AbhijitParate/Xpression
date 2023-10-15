@@ -3,10 +3,17 @@ package com.xpression.test
 import com.xpression.Result
 import com.xpression.Xpression
 import com.xpression.XpressionContext
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 
-class BaseXpressionTest {
+open class BaseXpressionTest {
 
-    lateinit var context: XpressionContext
+    private lateinit var context: XpressionContext
+
+    @BeforeEach
+    protected fun setup() {
+        context = TestContext()
+    }
 
     protected fun evaluate(xpression: Xpression) : Result {
         return xpression.evaluate(context)

@@ -10,6 +10,6 @@ object Converter {
 
     fun String.toNegativeNumber(context: XpressionContext) : Number {
         // TODO: Add config and parse other numbers
-        return this.toDouble()
+        return this.toDouble().times(-1)
     }
 }
