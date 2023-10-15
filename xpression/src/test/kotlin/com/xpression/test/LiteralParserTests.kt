@@ -12,7 +12,34 @@ class LiteralParserTests : BaseXpressionTest() {
         test("0.0001", .0001)
     }
 
-    private fun test(expression: String, result: Any) {
+    @Test
+    fun testTextParsing() {
+        test("\"This is a string.\"", "This is a string.")
+        test("'This is a string.'", "This is a string.")
+        test("\"This is a \\\"quoted\\\" string.\"", "This is a \"quoted\" string.")
+        test("\"This is a 'quoted' string.\"", "This is a 'quoted' string.")
+        test("\"\"", "")
+        test("\"\\\\\"", "\\")
+    }
+
+    @Test
+    fun testBooleanParsing() {
+        test("True", true)
+        test("true", true)
+        test("TRUE", true)
+        test("False", false)
+        test("false", false)
+        test("FALSE", false)
+    }
+
+    @Test
+    fun testNullParsing() {
+        test("Null", null)
+        test("null", null)
+        test("NULL", null)
+    }
+
+    private fun test(expression: String, result: Any?) {
         val r = evaluate(expression)
         assertEquals(result, r.value)
     }
