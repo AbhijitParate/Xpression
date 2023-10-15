@@ -1,10 +1,11 @@
-package com.xpression.internal
+package com.xpression.internal.component
 
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Operator
-import com.xpression.XpressionElement
 import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Result
+import com.xpression.internal.ExpressionParser
+import com.xpression.internal.XpressionVisitor
 
 class ComponentProvider(
     private val operatorMap: Map<String, Operator>,
@@ -38,10 +39,10 @@ class ComponentProvider(
     private fun unsupportedFunction(name: String): Function {
         return object : Function(name) {
             override fun evaluate(
-                xpressionVisitor: XpressionVisitor,
+                visitor: XpressionVisitor,
                 context: ExpressionParser.FunctionContext,
                 xpressionContext: XpressionContext
-            ): XpressionElement = Result.Error("Function not supported : $name")
+            ): Result = Result.Error("Function not supported : $name")
         }
     }
 

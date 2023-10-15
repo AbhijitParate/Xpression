@@ -6,15 +6,33 @@ import com.xpression.XpressionElement.Result
 import com.xpression.internal.Converter.toNegativeNumber
 import com.xpression.internal.Converter.toPositiveNumber
 import com.xpression.internal.ExpressionParser.*
+import com.xpression.internal.component.ComponentProvider
 import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.text.StringEscapeUtils
 
 class XpressionVisitor(
-    private val context: XpressionContext
+    private val context: XpressionContext,
+    private val provider: ComponentProvider
 ) : ExpressionBaseVisitor<XpressionElement>() {
 
     override fun visit(tree: ParseTree?): XpressionElement {
         return super.visit(tree)
+    }
+
+    override fun visitLiteralExpression(ctx: LiteralExpressionContext?): XpressionElement {
+        return super.visitLiteralExpression(ctx)
+    }
+
+    override fun visitAccessorExpression(ctx: AccessorExpressionContext?): XpressionElement {
+        return super.visitAccessorExpression(ctx)
+    }
+
+    override fun visitFunctionExpression(ctx: FunctionExpressionContext?): XpressionElement {
+        return super.visitFunctionExpression(ctx)
+    }
+
+    override fun visitScopedExpression(ctx: ScopedExpressionContext): XpressionElement {
+        return visit(ctx.scope())
     }
 
     override fun visitObjectAccessor(ctx: ObjectAccessorContext): Result {
@@ -27,6 +45,12 @@ class XpressionVisitor(
     override fun visitProperty(ctx: PropertyContext): XpressionElement.Property {
         val identifier = super.visit(ctx.identifier()) as XpressionElement.Identifier
         return XpressionElement.Property(identifier.name)
+    }
+
+    override fun visitFunction(ctx: FunctionContext): Result {
+        val functionIdentifier = visit(ctx.identifier()) as XpressionElement.Identifier
+        val function = provider.getFunction(functionIdentifier.name)
+        return function.evaluate(this, ctx, context)
     }
 
     override fun visitIdentifier(ctx: IdentifierContext): XpressionElement.Identifier {

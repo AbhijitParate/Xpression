@@ -1,6 +1,6 @@
 package com.xpression.internal.operator
 
-import com.xpression.internal.Component
+import com.xpression.internal.component.Component
 import com.xpression.internal.DataType
 
 abstract class Operator(private val operator: String, operandCount: Int = 0) : Component {

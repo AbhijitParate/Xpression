@@ -5,11 +5,10 @@ import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Result
 import com.xpression.internal.*
 import com.xpression.internal.ExpressionParser.ExpressionContext
+import com.xpression.internal.ExpressionParser.FunctionContext
+import com.xpression.internal.component.Component
 
-abstract class Function(
-    override val name: String,
-    override val argumentCount: Int = 0
-) : Component {
+abstract class Function(override val name: String, override val argumentCount: Int = 0) : Component {
 
     open fun execute(
         xpressionVisitor: XpressionVisitor,
@@ -26,9 +25,9 @@ abstract class Function(
 
     open fun evaluate(
         xpressionVisitor: XpressionVisitor,
-        context: ExpressionParser.FunctionContext,
+        context: FunctionContext,
         xpressionContext: XpressionContext
-    ): XpressionElement {
+    ): Result {
         validateMode(xpressionContext)?.let {
             return it
         }
