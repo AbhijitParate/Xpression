@@ -1,9 +1,10 @@
 package com.xpression.internal.function
 
+import com.xpression.XpressionElement
 import com.xpression.XpressionContext
+import com.xpression.XpressionElement.Result
 import com.xpression.internal.*
 import com.xpression.internal.ExpressionParser.ExpressionContext
-import com.xpression.Result as XpressionResult
 
 abstract class Function(
     override val name: String,
@@ -13,21 +14,21 @@ abstract class Function(
     open fun execute(
         xpressionVisitor: XpressionVisitor,
         xpressionContext: XpressionContext,
-        vararg arguments: XpressionResult
-    ): XpressionResult = execute(xpressionContext, *arguments)
+        vararg arguments: Result
+    ): Result = execute(xpressionContext, *arguments)
 
-    open fun execute(xpressionContext: XpressionContext, vararg arguments: XpressionResult): XpressionResult =
+    open fun execute(xpressionContext: XpressionContext, vararg arguments: XpressionElement): Result =
         execute(xpressionContext)
 
-    open fun execute(formulaContext: XpressionContext): XpressionResult = execute()
+    open fun execute(formulaContext: XpressionContext): Result = execute()
 
-    open fun execute() = XpressionResult.Error("Function not implemented : $name")
+    open fun execute(): Result = Result.Error("Function not implemented : $name")
 
     open fun evaluate(
         xpressionVisitor: XpressionVisitor,
         context: ExpressionParser.FunctionContext,
         xpressionContext: XpressionContext
-    ): XpressionResult {
+    ): XpressionElement {
         validateMode(xpressionContext)?.let {
             return it
         }
@@ -38,25 +39,25 @@ abstract class Function(
         validateArgumentCount(expressions)?.let {
             return it
         }
-        val results: Array<XpressionResult>
+        val xpressionElements: Array<Result>
         processArguments(expressions, xpressionVisitor, xpressionContext).let {
-            results = it
+            xpressionElements = it
         }
-        validateArguments(*results)?.let {
+        validateArguments(*xpressionElements)?.let {
             return it
         }
-        execute(xpressionVisitor, xpressionContext, *results).let {
+        execute(xpressionVisitor, xpressionContext, *xpressionElements).let {
             return it
         }
     }
 
-    open fun validateMode(context: XpressionContext): XpressionResult? = null
+    open fun validateMode(context: XpressionContext): Result? = null
 
-    open fun validateExpression(context: XpressionContext): XpressionResult? = null
+    open fun validateExpression(context: XpressionContext): Result? = null
 
-    protected open fun validateArgumentCount(expressions: List<ExpressionContext>): XpressionResult? {
+    protected open fun validateArgumentCount(expressions: List<ExpressionContext>): Result? {
         if (!validateArgumentCount(expressions.size)) {
-            return XpressionResult.Error("Too many or less arguments for $name function")
+            return Result.Error("Too many or less arguments for $name function")
         }
         return null
     }
@@ -75,10 +76,9 @@ abstract class Function(
         expressions: List<ExpressionContext>,
         visitor: XpressionVisitor,
         formulaContext: XpressionContext
-    ) = expressions.map { visitor.visit(it) }.toTypedArray()
+    ) = expressions.map { visitor.visit(it) as Result }.toTypedArray()
 
-    override fun validateArguments(vararg arguments: XpressionResult): XpressionResult? =
-        super.validateArguments(*arguments)
+    override fun validateArguments(vararg arguments: Result): Result? = super.validateArguments(*arguments)
 
     companion object {
 
@@ -86,26 +86,26 @@ abstract class Function(
             "Incorrect parameter type for function '%s'. "
         private const val EXPECTED_RECEIVED = "Expected - %s, received - %s."
 
-        fun invalidArguments(function: String): XpressionResult {
-            return XpressionResult.Error("Incorrect argument type for function $function().")
+        fun invalidArguments(function: String): XpressionElement {
+            return Result.Error("Incorrect argument type for function $function().")
         }
 
         fun incorrectParameters(
             function: String,
-            received: XpressionResult,
-            expected: XpressionResult
-        ): XpressionResult {
-            return XpressionResult.Error(
+            received: Result.Value,
+            expected: Result.Value
+        ): XpressionElement {
+            return Result.Error(
                 toErrorMessage(function = function, received = received.type, expected = arrayOf(expected.type))
             )
         }
 
         fun incorrectParameters(
             function: String,
-            received: XpressionResult,
+            received: Result.Value,
             vararg expected: DataType
-        ): XpressionResult {
-            return XpressionResult.Error(
+        ): XpressionElement {
+            return Result.Error(
                 toErrorMessage(function = function, received = received.type, expected = expected)
             )
         }

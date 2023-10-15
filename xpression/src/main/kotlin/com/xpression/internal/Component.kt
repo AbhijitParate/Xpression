@@ -1,7 +1,7 @@
 package com.xpression.internal
 
-import com.xpression.Result
-import com.xpression.Result.Companion.anyErrors
+import com.xpression.XpressionElement
+import com.xpression.XpressionElement.Result.Companion.anyErrors
 
 interface Component {
     /**
@@ -22,5 +22,5 @@ interface Component {
     /**
      * Return result with error if any or null
      */
-    fun validateArguments(vararg arguments: Result): Result? = anyErrors(*arguments)
+    fun validateArguments(vararg arguments: XpressionElement.Result): XpressionElement.Result? = anyErrors(*arguments)
 }

@@ -1,7 +1,7 @@
 package com.xpression
 
-interface XpressionContext {
+import com.xpression.XpressionElement.*
 
-
-
+abstract class XpressionContext {
+    abstract fun resolve(accessor: Accessor): Result
 }

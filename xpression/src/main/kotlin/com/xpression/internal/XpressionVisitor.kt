@@ -1,7 +1,8 @@
 package com.xpression.internal
 
-import com.xpression.Result
+import com.xpression.XpressionElement
 import com.xpression.XpressionContext
+import com.xpression.XpressionElement.Result
 import com.xpression.internal.Converter.toNegativeNumber
 import com.xpression.internal.Converter.toPositiveNumber
 import com.xpression.internal.ExpressionParser.*
@@ -10,10 +11,27 @@ import org.apache.commons.text.StringEscapeUtils
 
 class XpressionVisitor(
     private val context: XpressionContext
-) : ExpressionBaseVisitor<Result>() {
+) : ExpressionBaseVisitor<XpressionElement>() {
 
-    override fun visit(tree: ParseTree?): Result {
+    override fun visit(tree: ParseTree?): XpressionElement {
         return super.visit(tree)
+    }
+
+    override fun visitObjectAccessor(ctx: ObjectAccessorContext): Result {
+        val symbol = ctx.special?.text.orEmpty()
+        val properties = ctx.property().map { visit(it) as XpressionElement.Property }
+        val accessor = XpressionElement.Accessor(symbol = symbol, properties = properties.toTypedArray())
+        return context.resolve(accessor)
+    }
+
+    override fun visitProperty(ctx: PropertyContext): XpressionElement.Property {
+        val identifier = super.visit(ctx.identifier()) as XpressionElement.Identifier
+        return XpressionElement.Property(identifier.name)
+    }
+
+    override fun visitIdentifier(ctx: IdentifierContext): XpressionElement.Identifier {
+        val identifier = ctx.IDENTIFIER().text
+        return XpressionElement.Identifier(identifier)
     }
 
     override fun visitBooleanExpression(ctx: BooleanExpressionContext): Result {
@@ -22,7 +40,7 @@ class XpressionVisitor(
     }
 
     override fun visitNullExpression(ctx: NullExpressionContext?): Result {
-        return Result.Null()
+        return Result.nullValue()
     }
 
     override fun visitTextExpression(ctx: TextExpressionContext): Result {

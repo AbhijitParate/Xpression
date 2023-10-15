@@ -88,17 +88,16 @@ operation
     ;
 
 accessor
-    : OBJECT_ACCESSOR property ( PROPERTY_ACCESSOR property )*
+    : special=('$'|'#'|'@')? property ( ACCESSOR property )*
                                         #objectAccessor
-    | property ( PROPERTY_ACCESSOR property )*
-                                        #variableAccessor
-// TODO: Do we need this? What's the usecase?
+    // TODO: Do we need this? What's the usecase?
 //    | function ( PROPERTY_ACCESSOR property )*
-//                                        #resultAccessor
+//                                       #functionAccessor
     ;
 
 property
     : identifier
+    // TODO: Add special properties like @, :, etc
     ;
 
 function
@@ -159,10 +158,7 @@ SQUOTE      : '\''      ;
 DQUOTE      : '"'       ;
 
 /* Accessor */
-OBJECT_ACCESSOR
-            : '$'       ;
-PROPERTY_ACCESSOR
-            : '.'       ;
+ACCESSOR    : '.'       ;
 
 /* Concatinate operator */
 CONCATINATOR : '&'       ;

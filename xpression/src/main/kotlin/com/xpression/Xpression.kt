@@ -22,7 +22,7 @@ class Xpression(private val expression: String) {
 
     private val errorListener by lazy { ExpressionErrorListener() }
 
-    fun evaluate(context: XpressionContext): Result {
+    fun evaluate(context: XpressionContext): XpressionElement {
         return XpressionVisitor(context).visit(parseTree)
     }
 

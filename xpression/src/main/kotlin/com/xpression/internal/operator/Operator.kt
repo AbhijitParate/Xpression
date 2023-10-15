@@ -2,9 +2,8 @@ package com.xpression.internal.operator
 
 import com.xpression.internal.Component
 import com.xpression.internal.DataType
-import com.xpression.Result as XpressionResult
 
-abstract class Operator(operator: String, operandCount: Int = 0) : Component {
+abstract class Operator(private val operator: String, operandCount: Int = 0) : Component {
 
     override val name: String = operator
 
@@ -13,7 +12,7 @@ abstract class Operator(operator: String, operandCount: Int = 0) : Component {
     /**
      *
      */
-    fun evaluate(left: XpressionResult, right: XpressionResult): XpressionResult {
+    fun evaluate(left: com.xpression.XpressionElement.Result, right: com.xpression.XpressionElement.Result): com.xpression.XpressionElement.Result {
         validate(left, right)?.let {
             return it
         }
@@ -26,9 +25,9 @@ abstract class Operator(operator: String, operandCount: Int = 0) : Component {
      *  - Validate number of arguments
      *  - Validate type of arguments
      */
-    protected open fun validate(left: XpressionResult, right: XpressionResult): XpressionResult? {
+    protected open fun validate(left: com.xpression.XpressionElement.Result, right: com.xpression.XpressionElement.Result): com.xpression.XpressionElement.Result? {
         if (!validateArgumentCount(2)) {
-            return XpressionResult.Error("Too many or less arguments for operator : $name.")
+            return com.xpression.XpressionElement.Result.Error("Too many or less arguments for operator : $operator.")
         }
         return validateArguments(left, right)
     }
@@ -36,8 +35,8 @@ abstract class Operator(operator: String, operandCount: Int = 0) : Component {
     /**
      *
      */
-    protected open fun execute(left: XpressionResult, right: XpressionResult): XpressionResult {
-        return unhandledExpression("${left.value.toString()} $name ${right.value.toString()}")
+    protected open fun execute(left: com.xpression.XpressionElement.Result, right: com.xpression.XpressionElement.Result): com.xpression.XpressionElement.Result {
+        return unhandledExpression("x $operator y")
     }
 
     companion object {
@@ -49,16 +48,16 @@ abstract class Operator(operator: String, operandCount: Int = 0) : Component {
         private const val INCORRECT_PARAMS_FOR_OPERATOR = "Incorrect parameter type for operator '%s'. "
         private const val EXPECTED_RECEIVED = "Expected - %s, received - %s."
 
-        fun unhandledExpression(expression: String): XpressionResult {
-            return XpressionResult.Error("Unhandled expression : $expression")
+        fun unhandledExpression(expression: String): com.xpression.XpressionElement.Result {
+            return com.xpression.XpressionElement.Result.Error("Unhandled expression : $expression")
         }
 
         fun incorrectParams(
             operator: String,
-            received: XpressionResult,
-            expected: XpressionResult
-        ): XpressionResult {
-            return XpressionResult.Error(
+            received: com.xpression.XpressionElement.Result.Value,
+            expected: com.xpression.XpressionElement.Result.Value
+        ): com.xpression.XpressionElement {
+            return com.xpression.XpressionElement.Result.Error(
                 toErrorMessage(
                     operator = operator,
                     received = received.type,
@@ -69,10 +68,10 @@ abstract class Operator(operator: String, operandCount: Int = 0) : Component {
 
         fun incorrectParameters(
             operator: String,
-            received: XpressionResult,
+            received: com.xpression.XpressionElement.Result.Value,
             vararg expected: DataType
-        ): XpressionResult {
-            return XpressionResult.Error(
+        ): com.xpression.XpressionElement {
+            return com.xpression.XpressionElement.Result.Error(
                 toErrorMessage(
                     operator = operator,
                     received = received.type,

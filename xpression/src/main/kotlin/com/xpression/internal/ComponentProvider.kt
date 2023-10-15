@@ -2,8 +2,9 @@ package com.xpression.internal
 
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Operator
-import com.xpression.Result
+import com.xpression.XpressionElement
 import com.xpression.XpressionContext
+import com.xpression.XpressionElement.Result
 
 class ComponentProvider(
     private val operatorMap: Map<String, Operator>,
@@ -40,7 +41,7 @@ class ComponentProvider(
                 xpressionVisitor: XpressionVisitor,
                 context: ExpressionParser.FunctionContext,
                 xpressionContext: XpressionContext
-            ): Result = Result.Error("Function not supported : $name")
+            ): XpressionElement = Result.Error("Function not supported : $name")
         }
     }
 

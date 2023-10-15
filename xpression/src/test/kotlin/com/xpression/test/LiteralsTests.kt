@@ -1,9 +1,8 @@
 package com.xpression.test
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class LiteralParserTests : BaseXpressionTest() {
+class LiteralsTests : BaseXpressionTest() {
 
     @Test
     fun testNumberParsing() {
@@ -37,10 +36,5 @@ class LiteralParserTests : BaseXpressionTest() {
         test("Null", null)
         test("null", null)
         test("NULL", null)
-    }
-
-    private fun test(expression: String, result: Any?) {
-        val r = evaluate(expression)
-        assertEquals(result, r.value)
     }
 }

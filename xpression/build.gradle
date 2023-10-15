@@ -11,15 +11,15 @@ version = "0.0.1"
 sourceSets {
     main {
         java {
-            srcDir "${project.buildDir}/generated/"
+            srcDirs += "${project.projectDir}/build/generated"
         }
         kotlin {
-            srcDir "src/main/kotlin"
+            srcDirs += "src/main/kotlin"
         }
     }
     test {
         kotlin {
-            srcDir "src/test/kotlin"
+            srcDirs += "src/test/kotlin"
         }
     }
 }
@@ -29,21 +29,20 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-package", "com.xpression.internal", "-visitor"]
+    outputDirectory = new File("${project.projectDir}/build/generated/com/xpression/internal")
+}
+
 compileKotlin {
-//    doFirst { destinationDir = compileJava.destinationDir }
     kotlinOptions.jvmTarget = "1.8"
     dependsOn generateGrammarSource
 }
 
 compileTestKotlin {
-//    doFirst { destinationDir = compileTestJava.destinationDir }
     kotlinOptions.jvmTarget = "1.8"
-}
-
-generateGrammarSource {
-    maxHeapSize = "64m"
-    outputDirectory = new File("${project.projectDir}/build/generated/com/xpression/internal")
-    arguments += ["-package", "com.xpression.internal", "-visitor"]
+    dependsOn generateGrammarSource
 }
 
 dependencies {

@@ -1,5 +1,6 @@
 package com.xpression.internal
 
+// TODO: Convert this to Sealed class to allow custom dataTypes
 enum class DataType(val type: String) {
     None(Primitive.NONE),
 
