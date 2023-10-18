@@ -138,6 +138,7 @@ abstract class Function(
 
         // Math
         internal const val ABSOLUTE = "Absolute"
+        internal const val SQRT = "Sqrt"
         internal const val FLOOR = "Floor"
         internal const val CEILING = "Ceiling"
         // TODO: SUM(0...n)

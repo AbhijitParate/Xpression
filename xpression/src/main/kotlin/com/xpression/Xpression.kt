@@ -141,6 +141,7 @@ class Xpression(private val expression: String) {
                 Logic.NOT,
 //                // maths
                 Math.ABSOLUTE,
+                Math.SQRT,
                 Math.FLOOR,
                 Math.CEILING,
 //                // conditional
