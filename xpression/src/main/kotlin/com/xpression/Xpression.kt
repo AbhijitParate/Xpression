@@ -3,9 +3,11 @@ package com.xpression
 import com.xpression.internal.ExpressionLexer
 import com.xpression.internal.ExpressionParser
 import com.xpression.internal.XpressionVisitor
-import com.xpression.internal.component.ComponentProvider
+import com.xpression.internal.component.Provider
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Arithmetic
+import com.xpression.internal.operator.Comparison
+import com.xpression.internal.operator.Logical
 import com.xpression.internal.operator.Operator
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
@@ -103,7 +105,7 @@ class Xpression(private val expression: String) {
         }
 
         private val COMPONENTS_PROVIDER by lazy {
-            ComponentProvider.Builder()
+            Provider.Builder()
                 .addOperator(*standardOperatorList.toTypedArray())
                 .addFunction(*standardFunctionsList.toTypedArray())
                 .addFunction(*customFunctionList.toTypedArray())
@@ -117,15 +119,15 @@ class Xpression(private val expression: String) {
                 Arithmetic.DIVISION,                // /
                 Arithmetic.MODULO,                  // %
                 Arithmetic.EXPONENTIATION,          // ^
-//                Comparison.LESS_THAN,               // <
-//                Comparison.LESS_THAN_OR_EQUAL,      // <=
-//                Comparison.GREATER_THAN,            // >
-//                Comparison.GREATER_THAN_OR_EQUAL,   // >=
-//                Equality.EQUAL_TO,                  // = / ==
-//                Equality.NOT_EQUAL_TO,              // != / <>
-//                Logical.AND,                        // &&
-//                Logical.OR,                         // ||
-//                Concatenation.CONCATENATE           // &
+                Comparison.LESS_THAN,               // <
+                Comparison.LESS_THAN_OR_EQUAL,      // <=
+                Comparison.GREATER_THAN,            // >
+                Comparison.GREATER_THAN_OR_EQUAL,   // >=
+                Comparison.EQUAL,                   // ==
+                Comparison.UNEQUAL,                 // !=
+                Logical.AND,                        // &&
+                Logical.OR,                         // ||
+                Logical.NOT,                        // ||
             )
         }
 

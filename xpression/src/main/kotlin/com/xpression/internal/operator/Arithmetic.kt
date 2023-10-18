@@ -10,7 +10,7 @@ object Arithmetic {
         object : Operator("+", 2) {
             override fun execute(leftArgument: Result.Value, rightArgument: Result.Value): Result {
                 when {
-                    // Null * X + X * Null
+                    // Null + X | X + Null
                     leftArgument.isNull || rightArgument.isNull -> {
                         return Result.nullValue()
                     }
@@ -75,7 +75,7 @@ object Arithmetic {
         object : Operator("-", 2) {
             override fun execute(leftArgument: Result.Value, rightArgument: Result.Value): Result {
                 when {
-                    // Null * X - X * Null
+                    // Null - X | X - Null
                     leftArgument.isNull || rightArgument.isNull -> {
                         return Result.nullValue()
                     }
@@ -148,11 +148,11 @@ object Arithmetic {
         object : Operator("%", 2) {
             override fun execute(leftArgument: Result.Value, rightArgument: Result.Value): Result {
                 when {
-                    // Null / X | X / Null
+                    // Null % X | X % Null
                     leftArgument.isNull || rightArgument.isNull -> {
                         return Result.nullValue()
                     }
-                    // Number / Number
+                    // Number % Number
                     leftArgument.value is Double && rightArgument.value is Double -> {
                         val lvalue = leftArgument.value
                         val rvalue = rightArgument.value
@@ -214,12 +214,10 @@ object Arithmetic {
                     leftArgument.isNull || rightArgument.isNull -> {
                         return Result.nullValue()
                     }
-
                     // Number ^ Number
                     leftArgument.value is Double && rightArgument.value is Double -> {
                         return Result.Value(leftArgument.value.pow(rightArgument.value))
                     }
-
                     // Fallback
                     else -> {
                         return Result.Error(

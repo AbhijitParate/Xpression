@@ -38,9 +38,9 @@ logical
 
 equality
     : comparison                        #comparisonExpression_Ignored
-    | left=equality operator=EQEQ right=comparison
+    | left=equality operator=EQ right=comparison
                                         #equalityExpressionEqualTo
-    | left=equality operator=NTEQ right=comparison
+    | left=equality operator=NEQ right=comparison
                                         #equalityExpressionNotEqualTo
     ;
 
@@ -181,10 +181,8 @@ GT          : '>'       ;
 GE          : '>='      ;
 LT          : '<'       ;
 LE          : '<='      ;
-
-/* Equality operators */
-EQEQ        : '=='      ;
-NTEQ        : '!='      ;
+EQ          : '=='      ;
+NEQ         : '!='      ;
 
 /* ignore all white space characters */
 WS  :   (SPACE | '\t' | '\r'| '\n' | '\u000C' ) -> skip ;

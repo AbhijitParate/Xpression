@@ -4,10 +4,9 @@ import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Operator
 import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Result
-import com.xpression.internal.ExpressionParser
 import com.xpression.internal.XpressionVisitor
 
-class ComponentProvider(
+class Provider(
     private val operatorMap: Map<String, Operator>,
     private val functionMap: Map<String, Function>
 ) {
@@ -33,7 +32,7 @@ class ComponentProvider(
             return this
         }
 
-        fun build(): ComponentProvider = ComponentProvider(operatorMap.toMap(), functionMap.toMap())
+        fun build(): Provider = Provider(operatorMap.toMap(), functionMap.toMap())
     }
 
     private fun unsupportedFunction(name: String): Function {

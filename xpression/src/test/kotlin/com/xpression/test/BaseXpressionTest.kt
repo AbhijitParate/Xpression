@@ -2,7 +2,6 @@ package com.xpression.test
 
 import com.xpression.XpressionElement
 import com.xpression.Xpression
-import com.xpression.XpressionContext
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 
@@ -15,7 +14,7 @@ open class BaseXpressionTest {
         context = TestXpressionContext()
     }
 
-    protected fun test(expression: String, result: Any?) {
+    protected fun evaluate(expression: String, result: Any?) {
         val r = evaluate(expression)
         assert(r is XpressionElement.Result.Value) {
             r.toString()

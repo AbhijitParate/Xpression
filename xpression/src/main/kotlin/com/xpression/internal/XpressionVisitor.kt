@@ -6,13 +6,13 @@ import com.xpression.XpressionElement.Result
 import com.xpression.internal.Converter.toNegativeNumber
 import com.xpression.internal.Converter.toPositiveNumber
 import com.xpression.internal.ExpressionParser.*
-import com.xpression.internal.component.ComponentProvider
+import com.xpression.internal.component.Provider
 import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.text.StringEscapeUtils
 
 class XpressionVisitor(
     private val context: XpressionContext,
-    private val provider: ComponentProvider
+    private val provider: Provider
 ) : ExpressionBaseVisitor<XpressionElement>() {
 
     override fun visit(tree: ParseTree?): XpressionElement = super.visit(tree)
