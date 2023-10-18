@@ -1,6 +1,5 @@
 package com.xpression.test
 
-import com.xpression.XpressionElement
 import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Accessor
 import com.xpression.XpressionElement.Result

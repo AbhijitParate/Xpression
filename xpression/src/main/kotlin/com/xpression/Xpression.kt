@@ -129,7 +129,7 @@ class Xpression(private val expression: String) {
                 Logical.AND,                        // &&
                 Logical.OR,                         // ||
                 Logical.NOT,                        // ||
-                Logical.TERNARY,                        // ||
+                Logical.TERNARY,                    // ?:
             )
         }
 

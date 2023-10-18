@@ -135,7 +135,8 @@ object Logical {
 
     internal val TERNARY: Operator by lazy {
         object : Operator(TERNARY_OPERATOR, TERNARY_OPERAND_COUNT) {
-            override fun execute(argument: Result.Value): Result {
+            override fun execute(vararg arguments: Result.Value): Result {
+                val argument = arguments.first()
                 when {
                     // ! Null
                     argument.isNull -> {
@@ -144,7 +145,7 @@ object Logical {
                     // ! Boolean
                     argument.type == DataType.Boolean -> {
                         if (argument.value is Boolean) {
-                            return Result.Value(argument.value.not())
+                            return arguments[if (argument.value) 1 else 2]
                         }
                         return Result.Error(
                             incorrectClass(

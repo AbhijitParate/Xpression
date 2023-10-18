@@ -1,6 +1,6 @@
 package com.xpression.test
 
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class ComparisonExpressionsTests : BaseXpressionTest() {
 
