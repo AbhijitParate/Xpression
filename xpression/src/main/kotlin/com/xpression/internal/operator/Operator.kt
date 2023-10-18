@@ -1,7 +1,7 @@
 package com.xpression.internal.operator
 
 import com.xpression.XpressionElement.Result
-import com.xpression.internal.component.Component
+import com.xpression.internal.Component
 import com.xpression.internal.DataType
 
 abstract class Operator(final override val name: String, final override val argumentCount: Int) : Component {
@@ -80,6 +80,7 @@ abstract class Operator(final override val name: String, final override val argu
         const val UNARY_OPERAND_COUNT = 1
         const val BINARY_OPERAND_COUNT = 2
         const val TERNARY_OPERAND_COUNT = 3
+        const val TERNARY_OPERATOR = "?:"
         private const val INCORRECT_PARAMS_FOR_OPERATOR = "Incorrect parameter type for operator '%s'. "
 
         fun unhandledExpression(expression: String): Result {

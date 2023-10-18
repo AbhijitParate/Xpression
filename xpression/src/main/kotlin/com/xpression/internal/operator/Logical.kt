@@ -6,7 +6,7 @@ import com.xpression.internal.DataType
 object Logical {
 
     internal val AND: Operator by lazy {
-        object : Operator("&&", 2) {
+        object : Operator("&&", BINARY_OPERAND_COUNT) {
             override fun execute(leftArgument: Result.Value, rightArgument: Result.Value): Result {
                 when {
                     // Null && X | X && Null
@@ -50,7 +50,7 @@ object Logical {
     }
 
     internal val OR: Operator by lazy {
-        object : Operator("||", 2) {
+        object : Operator("||", BINARY_OPERAND_COUNT) {
             override fun execute(leftArgument: Result.Value, rightArgument: Result.Value): Result {
                 when {
                     // Null || X | X || Null
@@ -94,7 +94,47 @@ object Logical {
     }
 
     internal val NOT: Operator by lazy {
-        object : Operator("!", 1) {
+        object : Operator("!", UNARY_OPERAND_COUNT) {
+            override fun execute(argument: Result.Value): Result {
+                when {
+                    // ! Null
+                    argument.isNull -> {
+                        return Result.nullValue()
+                    }
+                    // ! Boolean
+                    argument.type == DataType.Boolean -> {
+                        if (argument.value is Boolean) {
+                            return Result.Value(argument.value.not())
+                        }
+                        return Result.Error(
+                            incorrectClass(
+                                operator = name,
+                                expected = listOf(
+                                    Boolean::class.java.simpleName
+                                ),
+                                received = listOf(
+                                    argument.value?.javaClass?.simpleName.toString()
+                                )
+                            )
+                        )
+                    }
+                    // Fallback
+                    else -> {
+                        return Result.Error(
+                            incorrectDataTypes(
+                                operator = name,
+                                expected = listOf(DataType.Boolean),
+                                received = listOf(argument.type)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    internal val TERNARY: Operator by lazy {
+        object : Operator(TERNARY_OPERATOR, TERNARY_OPERAND_COUNT) {
             override fun execute(argument: Result.Value): Result {
                 when {
                     // ! Null

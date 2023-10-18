@@ -1,4 +1,4 @@
-package com.xpression.internal.component
+package com.xpression.internal
 
 import com.xpression.XpressionElement.Result
 import com.xpression.XpressionElement.Result.Companion.anyErrors

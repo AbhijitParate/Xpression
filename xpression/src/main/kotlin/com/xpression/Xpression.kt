@@ -3,7 +3,7 @@ package com.xpression
 import com.xpression.internal.ExpressionLexer
 import com.xpression.internal.ExpressionParser
 import com.xpression.internal.XpressionVisitor
-import com.xpression.internal.component.Provider
+import com.xpression.internal.Provider
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Arithmetic
 import com.xpression.internal.operator.Comparison
@@ -128,6 +128,7 @@ class Xpression(private val expression: String) {
                 Logical.AND,                        // &&
                 Logical.OR,                         // ||
                 Logical.NOT,                        // ||
+                Logical.TERNARY,                        // ||
             )
         }
 

@@ -1,12 +1,11 @@
-package com.xpression.internal.component
+package com.xpression.internal
 
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Operator
 import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Result
-import com.xpression.internal.XpressionVisitor
 
-class Provider(
+internal class Provider(
     private val operatorMap: Map<String, Operator>,
     private val functionMap: Map<String, Function>
 ) {
