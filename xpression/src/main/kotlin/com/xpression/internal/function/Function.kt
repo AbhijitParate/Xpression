@@ -1,11 +1,11 @@
 package com.xpression.internal.function
 
+import com.xpression.Xpression.*
 import com.xpression.XpressionContext
-import com.xpression.XpressionElement.Result
 import com.xpression.internal.Component
 import com.xpression.internal.DataType
 import com.xpression.internal.ExpressionParser.FunctionContext
-import com.xpression.internal.XpressionVisitor
+import com.xpression.internal.Visitor
 
 abstract class Function(
     final override val name: String,
@@ -16,14 +16,14 @@ abstract class Function(
      * Evaluate Function Expressions
      */
     internal fun evaluate(
-        xpressionVisitor: XpressionVisitor,
+        visitor: Visitor,
         functionContext: FunctionContext,
         xpressionContext: XpressionContext
     ): Result {
         val argumentCount = functionContext.expression().size
         return validate(xpressionContext, argumentCount) ?: execute(xpressionContext, argumentCount) { index ->
             if (index in 0 until argumentCount) {
-                return@execute xpressionVisitor.visit(functionContext.expression(index)) as Result
+                return@execute visitor.visit(functionContext.expression(index)) as Result
             }
             // index out of arguments bound
             return@execute Result.Error(

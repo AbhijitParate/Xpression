@@ -1,8 +1,7 @@
 package com.xpression.test
 
+import com.xpression.Xpression.*
 import com.xpression.XpressionContext
-import com.xpression.XpressionElement.Accessor
-import com.xpression.XpressionElement.Result
 import com.xpression.internal.DataType
 
 class TestXpressionContext : XpressionContext() {
@@ -13,7 +12,7 @@ class TestXpressionContext : XpressionContext() {
         map[key] = value
     }
 
-    override fun resolve(accessor: Accessor): Result {
+    override fun resolve(accessor: XpressionElement.Accessor): Result {
         val property = accessor.properties.first()
         val value = map[property.name] ?: run {
             return Result.nullValue()

@@ -1,7 +1,7 @@
 package com.xpression.internal
 
-import com.xpression.XpressionElement.Result
-import com.xpression.XpressionElement.Result.Companion.anyErrors
+import com.xpression.Xpression.*
+import com.xpression.Xpression.Result.Companion.anyErrors
 
 interface Component {
     /**

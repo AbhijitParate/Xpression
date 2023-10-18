@@ -1,10 +1,8 @@
 package com.xpression.internal.function
 
+import com.xpression.Xpression.*
 import com.xpression.XpressionContext
-import com.xpression.XpressionElement
-import com.xpression.XpressionElement.Result
 import com.xpression.internal.DataType
-import java.lang.Math
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -24,7 +22,7 @@ object Math {
                     argument as Result.Value
                     when {
                         argument.isNull -> {
-                            return@run XpressionElement.Result.nullValue()
+                            return@run Result.nullValue()
                         }
                         argument.type == DataType.Number -> {
                             val value = argument.value
@@ -66,7 +64,7 @@ object Math {
                     argument as Result.Value
                     when {
                         argument.isNull -> {
-                            return@run XpressionElement.Result.nullValue()
+                            return@run Result.nullValue()
                         }
                         argument.type == DataType.Number -> {
                             val value = argument.value
@@ -108,7 +106,7 @@ object Math {
                     argument as Result.Value
                     when {
                         argument.isNull -> {
-                            return@run XpressionElement.Result.nullValue()
+                            return@run Result.nullValue()
                         }
                         argument.type == DataType.Number -> {
                             val value = argument.value
@@ -150,7 +148,7 @@ object Math {
                     argument as Result.Value
                     when {
                         argument.isNull -> {
-                            return@run XpressionElement.Result.nullValue()
+                            return@run Result.nullValue()
                         }
                         argument.type == DataType.Number -> {
                             val value = argument.value

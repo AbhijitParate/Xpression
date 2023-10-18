@@ -1,7 +1,7 @@
 package com.xpression
 
-import com.xpression.XpressionElement.*
+import com.xpression.Xpression.*
 
 abstract class XpressionContext {
-    abstract fun resolve(accessor: Accessor): Result
+    abstract fun resolve(accessor: XpressionElement.Accessor): Result
 }

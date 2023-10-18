@@ -1,7 +1,7 @@
 package com.xpression.internal.function
 
+import com.xpression.Xpression.*
 import com.xpression.XpressionContext
-import com.xpression.XpressionElement
 import com.xpression.internal.DataType
 
 object Logic {
@@ -12,17 +12,17 @@ object Logic {
             override fun execute(
                 xpressionContext: XpressionContext,
                 argumentCount: Int,
-                arguments: (Int) -> XpressionElement.Result
-            ): XpressionElement.Result {
+                arguments: (Int) -> Result
+            ): Result {
                 val argument = arguments.fetch(0)
                 return validate(argument) ?: run {
-                    argument as XpressionElement.Result.Value
+                    argument as Result.Value
                     if (argument.type == DataType.Boolean) {
                         val value = argument.value
                         if (value is Boolean) {
-                            return@run XpressionElement.Result.Value(value.not())
+                            return@run Result.Value(value.not())
                         }
-                        return@run XpressionElement.Result.Error(
+                        return@run Result.Error(
                             incorrectClass(
                                 function = name,
                                 expected = listOf(Boolean::class.java.simpleName),
@@ -30,7 +30,7 @@ object Logic {
                             )
                         )
                     }
-                    return@run XpressionElement.Result.Error(
+                    return@run Result.Error(
                         incorrectDataTypes(
                             function = name,
                             expected = listOf(DataType.Boolean),
@@ -52,21 +52,21 @@ object Logic {
             override fun execute(
                 xpressionContext: XpressionContext,
                 argumentCount: Int,
-                arguments: (Int) -> XpressionElement.Result
-            ): XpressionElement.Result {
+                arguments: (Int) -> Result
+            ): Result {
                 var result = true
                 for (index in 0 until argumentCount) {
                     val argument = arguments.fetch(index)
                     // validate arguments lazily and return early
                     validate(argument)?.let { error -> return error }
-                    argument as XpressionElement.Result.Value
+                    argument as Result.Value
                     if (argument.type == DataType.Boolean) {
                         val value = argument.value
                         if (value is Boolean) {
                             result = value and result
                             continue
                         }
-                        return XpressionElement.Result.Error(
+                        return Result.Error(
                             incorrectClass(
                                 function = name,
                                 expected = listOf(
@@ -78,7 +78,7 @@ object Logic {
                             )
                         )
                     }
-                    return XpressionElement.Result.Error(
+                    return Result.Error(
                         incorrectDataTypes(
                             function = name,
                             expected = listOf(DataType.Boolean),
@@ -86,7 +86,7 @@ object Logic {
                         )
                     )
                 }
-                return XpressionElement.Result.Value(result!!)
+                return Result.Value(result!!)
             }
         }
     }
@@ -101,21 +101,21 @@ object Logic {
             override fun execute(
                 xpressionContext: XpressionContext,
                 argumentCount: Int,
-                arguments: (Int) -> XpressionElement.Result
-            ): XpressionElement.Result {
+                arguments: (Int) -> Result
+            ): Result {
                 var result = false
                 for (index in 0 until argumentCount) {
                     val argument = arguments.fetch(index)
                     // validate arguments lazily and return early
                     validate(argument)?.let { error -> return error }
-                    argument as XpressionElement.Result.Value
+                    argument as Result.Value
                     if (argument.type == DataType.Boolean) {
                         val value = argument.value
                         if (value is Boolean) {
                             result = result or value
                             continue
                         }
-                        return XpressionElement.Result.Error(
+                        return Result.Error(
                             incorrectClass(
                                 function = name,
                                 expected = listOf(
@@ -127,7 +127,7 @@ object Logic {
                             )
                         )
                     }
-                    return XpressionElement.Result.Error(
+                    return Result.Error(
                         incorrectDataTypes(
                             function = name,
                             expected = listOf(DataType.Boolean),
@@ -135,7 +135,7 @@ object Logic {
                         )
                     )
                 }
-                return XpressionElement.Result.Value(result)
+                return Result.Value(result)
             }
         }
     }

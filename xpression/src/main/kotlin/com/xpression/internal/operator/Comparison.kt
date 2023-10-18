@@ -1,6 +1,6 @@
 package com.xpression.internal.operator
 
-import com.xpression.XpressionElement.Result
+import com.xpression.Xpression.*
 import com.xpression.internal.DataType
 
 object Comparison {

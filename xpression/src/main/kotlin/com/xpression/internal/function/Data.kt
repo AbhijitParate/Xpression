@@ -1,7 +1,7 @@
 package com.xpression.internal.function
 
+import com.xpression.Xpression.*
 import com.xpression.XpressionContext
-import com.xpression.XpressionElement.Result
 import com.xpression.internal.DataType
 
 object Data {
