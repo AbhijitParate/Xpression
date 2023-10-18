@@ -17,7 +17,9 @@ open class BaseXpressionTest {
 
     protected fun test(expression: String, result: Any?) {
         val r = evaluate(expression)
-        assert(r is XpressionElement.Result.Value)
+        assert(r is XpressionElement.Result.Value) {
+            r.toString()
+        }
         r as XpressionElement.Result.Value
         Assertions.assertEquals(result, r.value)
     }

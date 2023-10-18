@@ -3,6 +3,10 @@ package com.xpression
 import com.xpression.internal.ExpressionLexer
 import com.xpression.internal.ExpressionParser
 import com.xpression.internal.XpressionVisitor
+import com.xpression.internal.component.ComponentProvider
+import com.xpression.internal.function.Function
+import com.xpression.internal.operator.Arithmetic
+import com.xpression.internal.operator.Operator
 import org.antlr.v4.runtime.*
 import org.antlr.v4.runtime.atn.ATNConfigSet
 import org.antlr.v4.runtime.dfa.DFA
@@ -23,7 +27,11 @@ class Xpression(private val expression: String) {
     private val errorListener by lazy { ExpressionErrorListener() }
 
     fun evaluate(context: XpressionContext): XpressionElement {
-        return XpressionVisitor(context).visit(parseTree)
+        return createVisitor(context).visit(parseTree)
+    }
+
+    private fun createVisitor(context: XpressionContext): XpressionVisitor {
+        return XpressionVisitor(context, COMPONENTS_PROVIDER.build())
     }
 
     companion object {
@@ -93,5 +101,123 @@ class Xpression(private val expression: String) {
 
             fun hasErrors(): Boolean = errorMessages.any()
         }
+
+        private val COMPONENTS_PROVIDER by lazy {
+            ComponentProvider.Builder()
+                .addOperator(*standardOperatorList.toTypedArray())
+                .addFunction(*standardFunctionsList.toTypedArray())
+                .addFunction(*customFunctionList.toTypedArray())
+        }
+
+        private val standardOperatorList: List<Operator> by lazy {
+            listOf(
+                Arithmetic.ADDITION,                // +
+                Arithmetic.SUBTRACTION,             // -
+                Arithmetic.PRODUCT,                 // *
+                Arithmetic.DIVISION,                // /
+                Arithmetic.MODULO,                  // %
+                Arithmetic.EXPONENTIATION,          // ^
+//                Comparison.LESS_THAN,               // <
+//                Comparison.LESS_THAN_OR_EQUAL,      // <=
+//                Comparison.GREATER_THAN,            // >
+//                Comparison.GREATER_THAN_OR_EQUAL,   // >=
+//                Equality.EQUAL_TO,                  // = / ==
+//                Equality.NOT_EQUAL_TO,              // != / <>
+//                Logical.AND,                        // &&
+//                Logical.OR,                         // ||
+//                Concatenation.CONCATENATE           // &
+            )
+        }
+
+        private val standardFunctionsList: List<Function> by lazy {
+            listOf(
+//                // logic
+//                Logic.AND,
+//                Logic.OR,
+//                Logic.NOT,
+//                // maths
+//                Maths.ABS,
+//                Maths.FLOOR,
+//                Maths.CEILING,
+//                Maths.MOD,
+//                // conditional
+//                Conditional.IF,
+//                Conditional.CASE,
+//                // data
+//                Data.IS_BLANK,
+//                Data.IS_NULL,
+//                Data.IS_NUMBER,
+//                Data.NULL_VALUE,
+//                Data.BLANK_VALUE,
+//                // mode
+//                Data.IS_NEW,
+//                Data.IS_CHANGED,
+//                Data.PRIOR_VALUE,
+//                // date
+//                Date.DATE,
+//                Date.DATE_VALUE,
+//                Date.DATE_TIME_VALUE,
+//                Date.TODAY,
+//                Date.NOW,
+//                Date.DAY,
+//                Date.MONTH,
+//                Date.YEAR,
+//                // text
+//                Text.TEXT,
+//                Text.BEGINS,
+//                Text.CONTAINS,
+//                Text.REGEX,
+//                Text.LEN,
+//                Text.IS_PICKVAL
+            )
+        }
+
+        private val customFunctionList = mutableListOf<Function>()
+    }
+
+    private class FormulaErrorListener : ANTLRErrorListener {
+
+        private val errorMessages: MutableList<String> = mutableListOf()
+
+        override fun syntaxError(
+            recognizer: Recognizer<*, *>,
+            offendingSymbol: Any,
+            line: Int,
+            charPositionInLine: Int,
+            msg: String?,
+            e: RecognitionException?
+        ) {
+            errorMessages.add(msg.orEmpty())
+        }
+
+        override fun reportAmbiguity(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            exact: Boolean,
+            ambigAlts: BitSet?,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        override fun reportAttemptingFullContext(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            conflictingAlts: BitSet?,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        override fun reportContextSensitivity(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            prediction: Int,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        fun hasErrors(): Boolean = errorMessages.any()
     }
 }

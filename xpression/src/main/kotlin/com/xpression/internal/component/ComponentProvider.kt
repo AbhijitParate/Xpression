@@ -38,18 +38,22 @@ class ComponentProvider(
 
     private fun unsupportedFunction(name: String): Function {
         return object : Function(name) {
-            override fun evaluate(
-                visitor: XpressionVisitor,
-                context: ExpressionParser.FunctionContext,
-                xpressionContext: XpressionContext
-            ): Result = Result.Error("Function not supported : $name")
+            // TODO: Refactor this. Do not expose anything.
+            override fun execute(
+                xpressionVisitor: XpressionVisitor,
+                xpressionContext: XpressionContext,
+                vararg arguments: Result
+            ): Result {
+                return Result.Error("Function not supported : $name")
+            }
         }
     }
 
     private fun unsupportedOperator(operator: String): Operator {
-        return object : Operator(operator) {
-            override fun execute(left: Result, right: Result): Result =
-                Result.Error("Operator not supported : $operator")
+        return object : Operator(operator, 0) {
+            override fun validate(vararg arguments: Result): Result {
+                return Result.Error("Operator not supported : $operator")
+            }
         }
     }
 }

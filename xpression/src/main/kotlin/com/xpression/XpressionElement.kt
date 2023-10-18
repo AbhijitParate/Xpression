@@ -19,18 +19,24 @@ sealed class XpressionElement {
     sealed class Result : XpressionElement() {
 
         class Value(val value: Any?, val type: DataType) : Result() {
-            constructor(value: Number) : this(value, DataType.Number)
-            constructor(value: String) : this(value, DataType.Text)
-            constructor(value: Boolean) : this(value, DataType.Boolean)
+            constructor(number: Number) : this(value = number, DataType.Number)
+            constructor(string: String) : this(value = string, DataType.Text)
+            constructor(boolean: Boolean) : this(value = boolean, DataType.Boolean)
         }
 
-        class Error(val error: kotlin.Error) : Result() {
-            constructor(errorString: String) : this(kotlin.Error(errorString))
-        }
+        class Error(val error: String) : Result()
 
         val hasError: Boolean by lazy { this is Error }
 
         val hasValue: Boolean by lazy { this is Value }
+
+        val isNull: Boolean by lazy { this is Value && this.type == DataType.None }
+
+        override fun toString(): String {
+            if (this is Error) return error
+            this as Value
+            return "$type($value)"
+        }
 
         companion object {
             fun anyErrors(vararg results: Result): Result? = results.firstOrNull { it.hasError }

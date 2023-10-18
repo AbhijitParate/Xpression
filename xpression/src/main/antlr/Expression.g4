@@ -76,7 +76,7 @@ multiplication
 
 exponentiation
     : operation                         #operationExpression_Ignored
-    | left=operation operator=POW right=operation
+    | left=exponentiation operator=POW right=operation
                                         #exponentiationExpression
     ;
 

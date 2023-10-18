@@ -1,6 +1,6 @@
 package com.xpression.internal.component
 
-import com.xpression.XpressionElement
+import com.xpression.XpressionElement.Result
 import com.xpression.XpressionElement.Result.Companion.anyErrors
 
 interface Component {
@@ -17,10 +17,10 @@ interface Component {
     /**
      * Validate argument count
      */
-    fun validateArgumentCount(argumentCount: Int): Boolean = this.argumentCount == argumentCount
+    fun validateArgumentCount(count: Int): Boolean = this.argumentCount == count
 
     /**
      * Return result with error if any or null
      */
-    fun validateArguments(vararg arguments: XpressionElement.Result): XpressionElement.Result? = anyErrors(*arguments)
+    fun validateArguments(vararg arguments: Result): Result? = anyErrors(*arguments)
 }

@@ -15,8 +15,100 @@ class XpressionVisitor(
     private val provider: ComponentProvider
 ) : ExpressionBaseVisitor<XpressionElement>() {
 
-    override fun visit(tree: ParseTree?): XpressionElement {
-        return super.visit(tree)
+    override fun visit(tree: ParseTree?): XpressionElement = super.visit(tree)
+
+    override fun visitEvaluateExpression(ctx: EvaluateExpressionContext?): XpressionElement {
+        return super.visitEvaluateExpression(ctx)
+    }
+
+    override fun visitScopedExpression(ctx: ScopedExpressionContext?): XpressionElement {
+        return super.visitScopedExpression(ctx)
+    }
+
+    override fun visitRoundBracketExpression(ctx: RoundBracketExpressionContext): XpressionElement {
+        return visit(ctx.infixExpression())
+    }
+
+    override fun visitSquareBracketExpression(ctx: SquareBracketExpressionContext): XpressionElement {
+        return visit(ctx.infixExpression())
+    }
+
+    override fun visitCurlyBracketExpression(ctx: CurlyBracketExpressionContext): XpressionElement {
+        return visit(ctx.infixExpression())
+    }
+
+    override fun visitTernaryExpression(ctx: TernaryExpressionContext): XpressionElement {
+        return evaluate(
+            "?:",
+            visit(ctx.logical(0)) as Result,
+            visit(ctx.logical(1)) as Result,
+            visit(ctx.logical(2)) as Result,
+        )
+    }
+
+    override fun visitLogicalExpressionNot(ctx: LogicalExpressionNotContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result)
+    }
+
+    override fun visitLogicalExpressionAnd(ctx: LogicalExpressionAndContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitLogicalExpressionOr(ctx: LogicalExpressionOrContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitEqualityExpressionEqualTo(ctx: EqualityExpressionEqualToContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitEqualityExpressionNotEqualTo(ctx: EqualityExpressionNotEqualToContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitComparisonExpressionLessThan(ctx: ComparisonExpressionLessThanContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitComparisonExpressionLessThanOrEqual(ctx: ComparisonExpressionLessThanOrEqualContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitComparisonExpressionGreaterThan(ctx: ComparisonExpressionGreaterThanContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitComparisonExpressionGreaterThanOrEqual(ctx: ComparisonExpressionGreaterThanOrEqualContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitAdditionExpression(ctx: AdditionExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitSubtractionExpression(ctx: SubtractionExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitMultiplicationExpression(ctx: MultiplicationExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitDivisionExpression(ctx: DivisionExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitModulousExpression(ctx: ModulousExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    override fun visitExponentiationExpression(ctx: ExponentiationExpressionContext): XpressionElement {
+        return evaluate(ctx.operator.text, visit(ctx.left) as Result, visit(ctx.right) as Result)
+    }
+
+    private fun evaluate(operator: String, vararg operands: Result): Result {
+        val function = provider.getOperator(operator)
+        return function.evaluate(operands = operands)
     }
 
     override fun visitLiteralExpression(ctx: LiteralExpressionContext?): XpressionElement {
@@ -29,10 +121,6 @@ class XpressionVisitor(
 
     override fun visitFunctionExpression(ctx: FunctionExpressionContext?): XpressionElement {
         return super.visitFunctionExpression(ctx)
-    }
-
-    override fun visitScopedExpression(ctx: ScopedExpressionContext): XpressionElement {
-        return visit(ctx.scope())
     }
 
     override fun visitObjectAccessor(ctx: ObjectAccessorContext): Result {
