@@ -14,6 +14,13 @@ open class BaseXpressionTest {
         context = TestXpressionContext()
     }
 
+    protected fun evaluateError(expression: String) {
+        val r = evaluate(expression)
+        assert(r is XpressionElement.Result.Error) {
+            r.javaClass.simpleName
+        }
+    }
+
     protected fun evaluate(expression: String, result: Any?) {
         val r = evaluate(expression)
         assert(r is XpressionElement.Result.Value) {

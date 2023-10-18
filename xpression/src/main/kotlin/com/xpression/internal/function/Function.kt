@@ -1,145 +1,166 @@
 package com.xpression.internal.function
 
-import com.xpression.XpressionElement
 import com.xpression.XpressionContext
 import com.xpression.XpressionElement.Result
-import com.xpression.internal.*
-import com.xpression.internal.ExpressionParser.ExpressionContext
+import com.xpression.internal.Component
+import com.xpression.internal.DataType
 import com.xpression.internal.ExpressionParser.FunctionContext
-import com.xpression.internal.component.Component
+import com.xpression.internal.XpressionVisitor
 
-abstract class Function(override val name: String, override val argumentCount: Int = 0) : Component {
+abstract class Function(
+    final override val name: String,
+    final override val argumentCount: Int = 0
+) : Component {
 
-    open fun execute(
+    /**
+     * Evaluate Function Expressions
+     */
+    internal fun evaluate(
         xpressionVisitor: XpressionVisitor,
-        xpressionContext: XpressionContext,
-        vararg arguments: Result
-    ): Result = execute(xpressionContext, *arguments)
-
-    open fun execute(xpressionContext: XpressionContext, vararg arguments: XpressionElement): Result =
-        execute(xpressionContext)
-
-    open fun execute(formulaContext: XpressionContext): Result = execute()
-
-    open fun execute(): Result = Result.Error("Function not implemented : $name")
-
-    open fun evaluate(
-        xpressionVisitor: XpressionVisitor,
-        context: FunctionContext,
+        functionContext: FunctionContext,
         xpressionContext: XpressionContext
     ): Result {
-        validateMode(xpressionContext)?.let {
-            return it
-        }
-        validateExpression(xpressionContext)?.let {
-            return it
-        }
-        val expressions = context.expression()
-        validateArgumentCount(expressions)?.let {
-            return it
-        }
-        val xpressionElements: Array<Result>
-        processArguments(expressions, xpressionVisitor, xpressionContext).let {
-            xpressionElements = it
-        }
-        validateArguments(*xpressionElements)?.let {
-            return it
-        }
-        execute(xpressionVisitor, xpressionContext, *xpressionElements).let {
-            return it
+        val argumentCount = functionContext.expression().size
+        return validate(xpressionContext, argumentCount) ?: execute(xpressionContext, argumentCount) { index ->
+            if (index in 0 until argumentCount) {
+                return@execute xpressionVisitor.visit(functionContext.expression(index)) as Result
+            }
+            // index out of arguments bound
+            return@execute Result.Error(
+                incorrectArgumentIndex(
+                    function = name,
+                    expected = 0 until argumentCount,
+                    received = index
+                )
+            )
         }
     }
 
-    open fun validateMode(context: XpressionContext): Result? = null
-
-    open fun validateExpression(context: XpressionContext): Result? = null
-
-    protected open fun validateArgumentCount(expressions: List<ExpressionContext>): Result? {
-        if (!validateArgumentCount(expressions.size)) {
-            return Result.Error("Too many or less arguments for $name function")
-        }
+    /**
+     * Validate argument for errors
+     *
+     *  > Returns Result.Error on failure
+     */
+    protected open fun validate(argument: Result): Result? {
+        if (argument.hasError) return argument as Result.Error
         return null
     }
 
-    override fun validateArgumentCount(argumentCount: Int): Boolean {
+    /**
+     * Validate number of arguments
+     *
+     *  > Returns Result.Error on failure
+     */
+    protected open fun validate(xpressionContext: XpressionContext, count: Int): Result? {
+        // we don't validate arguments to improve performance
+        // by skipping unwanted sub-expressions evaluation
+        return validateCount(count)
+    }
+
+    /**
+     * Validate argument count
+     */
+    private fun validateCount(count: Int): Result? {
+        if (validateArgumentCount(count)) return null
+        return Result.Error(incorrectArguments(name, argumentCount, count))
+    }
+
+    /**
+     *
+     */
+    override fun validateArgumentCount(count: Int): Boolean {
         return when {
-            argumentCount == this.argumentCount -> true
+            count == this.argumentCount -> true
             this.argumentCount == VARIABLE_ARGUMENT_COUNT -> true
-            this.argumentCount == EVEN_ARGUMENT_COUNT && argumentCount % 2 == 0 -> true
-            this.argumentCount == ODD_ARGUMENT_COUNT && argumentCount % 2 == 1 -> true
+            this.argumentCount == EVEN_ARGUMENT_COUNT && count % 2 == 0 -> true
+            this.argumentCount == ODD_ARGUMENT_COUNT && count % 2 == 1 -> true
             else -> false
         }
     }
 
-    open fun processArguments(
-        expressions: List<ExpressionContext>,
-        visitor: XpressionVisitor,
-        formulaContext: XpressionContext
-    ) = expressions.map { visitor.visit(it) as Result }.toTypedArray()
+    /**
+     * Execute with context and arguments
+     */
+    open fun execute(xpressionContext: XpressionContext, argumentCount: Int, arguments: (Int) -> Result): Result {
+        return execute(xpressionContext)
+    }
 
-    override fun validateArguments(vararg arguments: Result): Result? = super.validateArguments(*arguments)
+    /**
+     * Execute with context
+     */
+    open fun execute(xpressionContext: XpressionContext): Result = execute()
+
+    /**
+     * Execute
+     */
+    open fun execute(): Result = Result.Error("Function not implemented : $name")
+
+    protected fun ((Int) -> Result).fetch(index: Int) = this.invoke(index)
 
     companion object {
 
-        private const val INCORRECT_PARAMS_FOR_FUNCTION =
-            "Incorrect parameter type for function '%s'. "
-        private const val EXPECTED_RECEIVED = "Expected - %s, received - %s."
-
-        fun invalidArguments(function: String): XpressionElement {
-            return Result.Error("Incorrect argument type for function $function().")
-        }
-
-        fun incorrectParameters(
-            function: String,
-            received: Result.Value,
-            expected: Result.Value
-        ): XpressionElement {
-            return Result.Error(
-                toErrorMessage(function = function, received = received.type, expected = arrayOf(expected.type))
+        fun incorrectArgumentIndex(function: String, expected: IntRange, received: Int): String {
+            return ("Error: Invalid arguments access for Function('$function'). " +
+                    "Expected - [%s], Received - [%s]").format(
+                expected.joinToString(".."),
+                received
             )
         }
 
-        fun incorrectParameters(
-            function: String,
-            received: Result.Value,
-            vararg expected: DataType
-        ): XpressionElement {
-            return Result.Error(
-                toErrorMessage(function = function, received = received.type, expected = expected)
+        fun incorrectClass(function: String, expected: List<String>, received: List<String>): String {
+            return toErrorMessage(function = function, received = received, expected = expected)
+        }
+
+        fun incorrectDataTypes(function: String, received: List<DataType>, expected: List<DataType>): String {
+            return toErrorMessage(function = function, expected.map { it.type }, received.map { it.type })
+        }
+
+        fun incorrectArguments(function: String, expected: Int, received: Int): String {
+            return toErrorMessage(function, expected, received)
+        }
+
+        private fun toErrorMessage(function: String, expected: List<String>, received: List<String>): String {
+            return ("Error: Invalid arguments for function $function(). " +
+                    "Expected - [%s], Received - [%s]").format(
+                expected.joinToString(),
+                received.joinToString()
             )
         }
 
-        private fun toErrorMessage(function: String, received: DataType, vararg expected: DataType): String {
-            return INCORRECT_PARAMS_FOR_FUNCTION.format(function) +
-                    EXPECTED_RECEIVED.format(expected.joinToString(), received.name)
+        private fun toErrorMessage(function: String, expected: Int, received: Int): String {
+            return ("Error: Invalid number of arguments for function $function(). " +
+                    "Expected - [%d], Received - [%d]").format(expected, received)
         }
 
         const val VARIABLE_ARGUMENT_COUNT = -1
         const val EVEN_ARGUMENT_COUNT = -2
         const val ODD_ARGUMENT_COUNT = -3
 
-        // Conditional
-        internal const val FUNCTION_IF = "IF"
-        internal const val FUNCTION_CASE = "CASE"
-
         // Math
-        internal const val FUNCTION_ABS = "ABS"
-        internal const val FUNCTION_FLOOR = "FLOOR"
-        internal const val FUNCTION_CEILING = "CEILING"
-        internal const val FUNCTION_MOD = "MOD"
+        internal const val ABSOLUTE = "Absolute"
+        internal const val FLOOR = "Floor"
+        internal const val CEILING = "Ceiling"
+        // TODO: SUM(0...n)
+
+        // Conditional
+        internal const val IF = "IF"
+
+        // Data
+        internal const val IS_NULL = "IsNull"
+        internal const val IS_BLANK = "IsBlank"
+        internal const val IS_NUMBER = "IsNumber"
+        internal const val IS_BOOLEAN = "IsBoolean"
+        internal const val IS_TEXT = "IsText"
 
         // Logic
-        internal const val FUNCTION_IS_BLANK = "ISBLANK"
-        internal const val FUNCTION_BLANK_VALUE = "BLANKVALUE"
-        internal const val FUNCTION_IS_NULL = "ISNULL"
-        internal const val FUNCTION_NULL_VALUE = "NULLVALUE"
-        internal const val FUNCTION_IS_NUMBER = "ISNUMBER"
-        internal const val FUNCTION_IS_CHANGED = "ISCHANGED"
-        internal const val FUNCTION_IS_NEW = "ISNEW"
-        internal const val FUNCTION_PRIOR_VALUE = "PRIORVALUE"
-        internal const val FUNCTION_NOT = "NOT"
-        internal const val FUNCTION_AND = "AND"
-        internal const val FUNCTION_OR = "OR"
+        internal const val NOT = "Not"
+        internal const val AND = "And"
+        internal const val OR = "Or"
+
+        // Text
+        internal const val LEN = "Len"
+        internal const val CONTAINS = "Contains"
+        internal const val TEXT = "Text"
 
         // Date and Time
         internal const val FUNCTION_DATE = "DATE"
@@ -154,13 +175,5 @@ abstract class Function(override val name: String, override val argumentCount: I
         internal const val FUNCTION_MINUTE = "MINUTE"
         internal const val FUNCTION_SECOND = "SECOND"
         internal const val FUNCTION_MILLISECOND = "MILLISECOND"
-
-        // Text
-        internal const val FUNCTION_TEXT = "TEXT"
-        internal const val FUNCTION_BEGINS = "BEGINS"
-        internal const val FUNCTION_CONTAINS = "CONTAINS"
-        internal const val FUNCTION_REGEX = "REGEX"
-        internal const val FUNCTION_LEN = "LEN"
-        internal const val FUNCTION_IS_PICKVAL = "ISPICKVAL"
     }
 }

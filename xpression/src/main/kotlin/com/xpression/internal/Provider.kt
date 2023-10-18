@@ -37,12 +37,8 @@ internal class Provider(
     private fun unsupportedFunction(name: String): Function {
         return object : Function(name) {
             // TODO: Refactor this. Do not expose anything.
-            override fun execute(
-                xpressionVisitor: XpressionVisitor,
-                xpressionContext: XpressionContext,
-                vararg arguments: Result
-            ): Result {
-                return Result.Error("Function not supported : $name")
+            override fun validate(xpressionContext: XpressionContext, count: Int): Result {
+                return Result.Error("Function not supported : $name()")
             }
         }
     }

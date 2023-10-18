@@ -4,6 +4,7 @@ import com.xpression.internal.ExpressionLexer
 import com.xpression.internal.ExpressionParser
 import com.xpression.internal.XpressionVisitor
 import com.xpression.internal.Provider
+import com.xpression.internal.function.*
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Arithmetic
 import com.xpression.internal.operator.Comparison
@@ -135,27 +136,21 @@ class Xpression(private val expression: String) {
         private val standardFunctionsList: List<Function> by lazy {
             listOf(
 //                // logic
-//                Logic.AND,
-//                Logic.OR,
-//                Logic.NOT,
+                Logic.AND,
+                Logic.OR,
+                Logic.NOT,
 //                // maths
-//                Maths.ABS,
-//                Maths.FLOOR,
-//                Maths.CEILING,
-//                Maths.MOD,
+                Math.ABSOLUTE,
+                Math.FLOOR,
+                Math.CEILING,
 //                // conditional
 //                Conditional.IF,
-//                Conditional.CASE,
 //                // data
-//                Data.IS_BLANK,
-//                Data.IS_NULL,
-//                Data.IS_NUMBER,
-//                Data.NULL_VALUE,
-//                Data.BLANK_VALUE,
-//                // mode
-//                Data.IS_NEW,
-//                Data.IS_CHANGED,
-//                Data.PRIOR_VALUE,
+                Data.IS_BLANK,
+                Data.IS_NULL,
+                Data.IS_NUMBER,
+                Data.IS_TEXT,
+                Data.IS_BOOLEAN,
 //                // date
 //                Date.DATE,
 //                Date.DATE_VALUE,
@@ -166,12 +161,11 @@ class Xpression(private val expression: String) {
 //                Date.MONTH,
 //                Date.YEAR,
 //                // text
-//                Text.TEXT,
+                Text.LEN,
+                Text.CONTAINS,
+                Text.TEXT,
 //                Text.BEGINS,
-//                Text.CONTAINS,
-//                Text.REGEX,
-//                Text.LEN,
-//                Text.IS_PICKVAL
+//                Text.REGEX
             )
         }
 

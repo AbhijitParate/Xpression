@@ -17,7 +17,7 @@ interface Component {
     /**
      * Validate argument count
      */
-    fun validateArgumentCount(count: Int): Boolean = this.argumentCount == count
+    fun validateArgumentCount(count: Int) = argumentCount == count
 
     /**
      * Return result with error if any or null
