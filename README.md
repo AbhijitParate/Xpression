@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Xpression is a powerful language for performing calculations on data in applications. It supports basic arithmetic, logical, and comparison operators, as well as custom functions that can manipulate text strings, primitive, abstract, and complex data types.
+Xpression is a powerful language for performing operations on data in applications. It supports basic arithmetic, logical, and comparison operators, as well as custom functions that can manipulate text strings, primitive, abstract, and complex data types.
 
 Xpressions can be used to perform a wide range of tasks, such as:
 
@@ -37,6 +37,6 @@ For example, if an expression is invalid or contains an invalid operand or a fun
 ##Usage
 
 ```
-val result:Result = Xpression("1 + 2").evaluate()
-result.value
+val result = Xpression("1 + 2").evaluate()
+val sum = result.value // raw value
 ```

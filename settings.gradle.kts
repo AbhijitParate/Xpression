@@ -1,2 +1,1 @@
-rootProject.name = "Xpression"
-include("xpression")
+rootProject.name = "Xpression"include("xpression")
