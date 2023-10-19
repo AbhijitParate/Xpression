@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.xpression.test.ArithmeticExpressionsTests" tests="6" skipped="0" failures="0" errors="0" timestamp="2023-10-19T00:32:07" hostname="Abhijits-MacBook-Pro.local" time="0.087">
+<testsuite name="com.xpression.test.ArithmeticExpressionsTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-10-19T16:44:28" hostname="Abhijits-MacBook-Pro.local" time="0.072">
   <properties/>
-  <testcase name="testExpressionWithMixedOperators()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.009"/>
+  <testcase name="testExpressionWithMixedOperators()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.064"/>
   <testcase name="testExpressionWithBrackets()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.001"/>
   <testcase name="testExpressionWithNestedBrackets()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.005"/>
-  <testcase name="testExpressionWithMixedOperators()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.0"/>
-  <testcase name="testExpressionWithBrackets()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.001"/>
-  <testcase name="testExpressionWithNestedBrackets()" classname="com.xpression.test.ArithmeticExpressionsTests" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
+  <system-out><![CDATA[Error: [1:2] - invalid input '#'
+]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

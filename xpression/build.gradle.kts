@@ -49,8 +49,8 @@ tasks.compileTestKotlin {
 }
 
 dependencies {
-    antlr("org.antlr:antlr4:4.10.1")
-    implementation("org.antlr:antlr4-runtime:4.10.1")
+    antlr("org.antlr:antlr4:4.13.1")
+    implementation("org.antlr:antlr4-runtime:4.13.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     implementation("org.apache.commons:commons-text:1.10.0")
     testImplementation(kotlin("test"))

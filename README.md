@@ -28,15 +28,21 @@ Here are some examples of simple expressions:
 * `Len("HelloWorld!!!")` = `13`
 * `Text(42)` = `"42"`
 
+## Usage
+
+```
+val result = Xpression("1 + 2").evaluate()
+println(result.value) // 3.0
+```
+
 ## Error handling
 
 Xpression handles errors gracefully.
 
 For example, if an expression is invalid or contains an invalid operand or a function that is not supported, it will return an error with human understandable message.
 
-##Usage
-
+**Example**
 ```
-val result = Xpression("1 + 2").evaluate()
-val sum = result.value // raw value
+val result = Xpression("1 # 2").evaluate()
+println(result.error) // 
 ```

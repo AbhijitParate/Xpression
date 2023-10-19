@@ -17,5 +17,6 @@ class ArithmeticExpressionsTests : BaseXpressionTest() {
   @Test
   fun testExpressionWithMixedOperators() {
     evaluate("[1 + 2] * 3 - 4 / 5", 8.2)
+    evaluateError("1 # 3")
   }
 }

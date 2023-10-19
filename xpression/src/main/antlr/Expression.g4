@@ -2,7 +2,7 @@ grammar Expression;
 
 // provides entry point for all kind of expressions
 root
-    : expression                        #evaluateExpression
+    : expression EOF                   #evaluateExpression
     ;
 
 expression

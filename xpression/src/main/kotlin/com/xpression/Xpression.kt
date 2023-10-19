@@ -1,8 +1,6 @@
 package com.xpression
 
 import com.xpression.internal.*
-import com.xpression.internal.Provider
-import com.xpression.internal.Visitor
 import com.xpression.internal.function.*
 import com.xpression.internal.function.Function
 import com.xpression.internal.operator.Arithmetic
@@ -18,9 +16,17 @@ import java.util.*
 
 class Xpression(private val expression: String) {
 
-    private val parser: ExpressionParser by lazy {
+    private val parser by lazy {
         expression.toExpressionParser().apply {
+            removeErrorListeners()
             addErrorListener(errorListener)
+            errorHandler = object : DefaultErrorStrategy() {
+                override fun recover(recognizer: Parser, e: RecognitionException) = throw e
+                override fun recoverInline(recognizer: Parser) = throw RuntimeException(
+                    "Error: [${recognizer.currentToken.line}:${recognizer.currentToken.charPositionInLine}]" +
+                            " - invalid input '${recognizer.currentToken.text}'"
+                )
+            }
         }
     }
 
@@ -29,7 +35,11 @@ class Xpression(private val expression: String) {
     private val errorListener by lazy { ExpressionErrorListener() }
 
     fun evaluate(context: XpressionContext): XpressionElement {
-        return createVisitor(context).visit(parseTree)
+        return try {
+            createVisitor(context).visit(parseTree)
+        } catch (e: Exception) {
+            Result.Error(e.localizedMessage)
+        }
     }
 
     private fun createVisitor(context: XpressionContext): Visitor {
@@ -60,7 +70,7 @@ class Xpression(private val expression: String) {
 
         private class ExpressionErrorListener : ANTLRErrorListener {
 
-            private val errorMessages: MutableList<String> = mutableListOf()
+            val errorMessages: MutableList<String> = mutableListOf()
 
             override fun syntaxError(
                 recognizer: Recognizer<*, *>,
@@ -102,6 +112,8 @@ class Xpression(private val expression: String) {
             ) = Unit
 
             fun hasErrors(): Boolean = errorMessages.any()
+
+
         }
 
         private val COMPONENTS_PROVIDER by lazy {

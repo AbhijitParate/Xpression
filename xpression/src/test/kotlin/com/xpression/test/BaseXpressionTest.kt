@@ -19,6 +19,7 @@ open class BaseXpressionTest {
         assert(r is Result.Error) {
             r.javaClass.simpleName
         }
+        println((r as Result.Error).error)
     }
 
     protected fun evaluate(expression: String, result: Any?) {

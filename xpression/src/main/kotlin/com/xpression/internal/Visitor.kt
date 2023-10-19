@@ -16,12 +16,12 @@ internal class Visitor(
 
     override fun visit(tree: ParseTree?): XpressionElement = super.visit(tree)
 
-    override fun visitEvaluateExpression(ctx: EvaluateExpressionContext?): XpressionElement {
-        return super.visitEvaluateExpression(ctx)
+    override fun visitEvaluateExpression(ctx: EvaluateExpressionContext): XpressionElement {
+        return visit(ctx.expression())
     }
 
-    override fun visitScopedExpression(ctx: ScopedExpressionContext?): XpressionElement {
-        return super.visitScopedExpression(ctx)
+    override fun visitScopedExpression(ctx: ScopedExpressionContext): XpressionElement {
+        return visit(ctx.scope())
     }
 
     override fun visitRoundBracketExpression(ctx: RoundBracketExpressionContext): XpressionElement {
