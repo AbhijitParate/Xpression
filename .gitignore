@@ -1,13 +1,7 @@
-# Compiled class file
-*.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.idea/*
-.gradle/*
-gradle/*
+# gradle and local files
+.idea
+.gradle
+gradle
+gradlew
+gradlew.bat
+local.properties
