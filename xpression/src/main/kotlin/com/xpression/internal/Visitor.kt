@@ -129,9 +129,15 @@ internal class Visitor(
         return context.resolve(accessor)
     }
 
-    override fun visitProperty(ctx: PropertyContext): XpressionElement.Property {
+    override fun visitPropertyAccessor(ctx: PropertyAccessorContext): XpressionElement {
         val identifier = super.visit(ctx.identifier()) as XpressionElement.Identifier
         return XpressionElement.Property(identifier.name)
+    }
+
+    override fun visitSubscriptAccessor(ctx: SubscriptAccessorContext): XpressionElement {
+        val identifier = super.visit(ctx.identifier()) as XpressionElement.Identifier
+        val index = super.visit(ctx.expression()) as Result
+        return XpressionElement.Property(name = identifier.name, subscript = index)
     }
 
     override fun visitFunction(ctx: FunctionContext): Result {

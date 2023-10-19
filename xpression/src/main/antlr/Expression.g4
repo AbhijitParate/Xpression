@@ -96,8 +96,9 @@ accessor
     ;
 
 property
-    : identifier
-    // TODO: Add special properties like @, :, etc
+    : identifier                        #propertyAccessor
+    | identifier '[' index=expression ']'
+                                        #subscriptAccessor
     ;
 
 function

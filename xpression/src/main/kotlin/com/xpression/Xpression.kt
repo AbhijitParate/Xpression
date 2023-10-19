@@ -191,7 +191,7 @@ class Xpression(private val expression: String) {
             val properties by lazy { properties }
         }
 
-        class Property(name: String) : Identifier(name) {
+        class Property(name: String, subscript: Result? = null) : Identifier(name) {
             // TODO: Add special properties like @, :, etc
             // val isSpecial: Boolean
         }
