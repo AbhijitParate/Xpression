@@ -1,7 +1,15 @@
 package com.xpression
 
-import com.xpression.Xpression.*
+import com.xpression.Xpression.Result
+import com.xpression.Xpression.XpressionElement
 
-abstract class XpressionContext {
-    abstract fun resolve(accessor: XpressionElement.Accessor): Result
+open class XpressionContext {
+
+    open fun resolve(accessor: XpressionElement.Accessor): Result {
+        return Result.nullValue()
+    }
+
+    companion object {
+        internal val DEFAULT = XpressionContext()
+    }
 }

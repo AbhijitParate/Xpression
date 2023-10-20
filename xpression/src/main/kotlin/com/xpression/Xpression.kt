@@ -35,7 +35,7 @@ class Xpression(private val expression: String) {
 
     private val errorListener by lazy { ExpressionErrorListener() }
 
-    fun evaluate(context: XpressionContext): XpressionElement {
+    fun evaluate(context: XpressionContext = XpressionContext.DEFAULT): XpressionElement {
         return try {
             createVisitor(context).visit(parseTree)
         } catch (e: Exception) {
@@ -216,7 +216,7 @@ class Xpression(private val expression: String) {
             val properties by lazy { properties }
         }
 
-        class Property(name: String, subscript: Result? = null) : Identifier(name) {
+        class Property(name: String, val subscript: Result? = null) : Identifier(name) {
             // TODO: Add special properties like @, :, etc
             // val isSpecial: Boolean
         }
