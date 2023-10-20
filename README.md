@@ -30,10 +30,32 @@ Here are some examples of simple expressions:
 
 ## Usage
 
+Simple expressions
 ```
 val result = Xpression("1 + 2").evaluate()
 println(result.value) // 3.0
 ```
+Complex expressions using 
+```
+// User object json
+// { 
+//    "User" : { 
+//       "Name" : "Bob", 
+//       "Age" : 42 
+//    } 
+// }
+
+val context = UserContext() // extend XpressionContext
+val result = Xpression("\"Hello\" + User.Name + \"!\"").evaluate(context)
+println(result.value) // "Hello Bob!"
+```
+
+## Customization
+
+Xpression can be customized by 
+1. overriding existing function implementations
+2. adding custom function implementations
+3. introducing new complex data types, etc.
 
 ## Error handling
 
