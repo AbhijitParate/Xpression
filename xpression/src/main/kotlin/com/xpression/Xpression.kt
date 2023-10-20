@@ -1,5 +1,6 @@
 package com.xpression
 
+import com.xpression.ResettableLazyManager.Companion.resettableLazy
 import com.xpression.internal.*
 import com.xpression.internal.function.*
 import com.xpression.internal.function.Function
@@ -23,8 +24,8 @@ class Xpression(private val expression: String) {
             errorHandler = object : DefaultErrorStrategy() {
                 override fun recover(recognizer: Parser, e: RecognitionException) = throw e
                 override fun recoverInline(recognizer: Parser) = throw RuntimeException(
-                    "Error: [${recognizer.currentToken.line}:${recognizer.currentToken.charPositionInLine}]" +
-                            " - invalid input '${recognizer.currentToken.text}'"
+                    "Error: Invalid character '${recognizer.currentToken.text}'" +
+                            " at [${recognizer.currentToken.line}:${recognizer.currentToken.charPositionInLine}]"
                 )
             }
         }
@@ -116,12 +117,7 @@ class Xpression(private val expression: String) {
 
         }
 
-        private val COMPONENTS_PROVIDER by lazy {
-            Provider.Builder()
-                .addOperator(*standardOperatorList.toTypedArray())
-                .addFunction(*standardFunctionsList.toTypedArray())
-                .addFunction(*customFunctionList.toTypedArray())
-        }
+        private val lazyManager: ResettableLazyManager by lazy { ResettableLazyManager() }
 
         private val standardOperatorList: List<Operator> by lazy {
             listOf(
@@ -182,6 +178,35 @@ class Xpression(private val expression: String) {
         }
 
         private val customFunctionList = mutableListOf<Function>()
+
+        private val COMPONENTS_PROVIDER by resettableLazy(lazyManager) {
+            Provider.Builder()
+                .addOperator(*standardOperatorList.toTypedArray())
+                .addFunction(*standardFunctionsList.toTypedArray())
+                .addFunction(*customFunctionList.toTypedArray())
+        }
+
+        /**
+         * Removes all custom function implementations
+         */
+        @Synchronized fun reset() {
+            customFunctionList.clear()
+            lazyManager.reset()
+        }
+
+        /**
+         * Adds custom function implementations
+         */
+        fun addFunction(vararg function: Function): Boolean {
+            return customFunctionList.addAll(function)
+        }
+
+        /**
+         * Return default implementation for function
+         */
+        fun getDefaultFunction(functionName: String): Function? {
+            return standardFunctionsList.find { it.name == functionName }
+        }
     }
 
     sealed class XpressionElement {

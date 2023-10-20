@@ -44,5 +44,5 @@ For example, if an expression is invalid or contains an invalid operand or a fun
 **Example**
 ```
 val result = Xpression("1 # 2").evaluate()
-println(result.error) // 
+println(result.error) // Error: Invalid character '#' at [1:3]
 ```
