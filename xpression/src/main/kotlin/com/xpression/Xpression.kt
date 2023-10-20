@@ -1,6 +1,5 @@
 package com.xpression
 
-import com.xpression.ResettableLazyManager.Companion.resettableLazy
 import com.xpression.internal.*
 import com.xpression.internal.function.*
 import com.xpression.internal.function.Function
@@ -16,6 +15,8 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 class Xpression(private val expression: String) {
+
+    private val config: Config by lazy { Config() }
 
     private val parser by lazy {
         expression.toExpressionParser().apply {
@@ -35,92 +36,24 @@ class Xpression(private val expression: String) {
 
     private val errorListener by lazy { ExpressionErrorListener() }
 
-    fun evaluate(context: XpressionContext = XpressionContext.DEFAULT): XpressionElement {
+    private val defaultContext: XpressionContext by lazy { XpressionContext.DEFAULT }
+
+    fun evaluate(context: XpressionContext = defaultContext): Result {
         return try {
-            createVisitor(context).visit(parseTree)
+            createVisitor(context).visit(parseTree) as Result
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage)
+            Result.Error(e.localizedMessage.orEmpty(), e)
         }
     }
 
     private fun createVisitor(context: XpressionContext): Visitor {
-        return Visitor(context, COMPONENTS_PROVIDER.build())
+        return Visitor(context, config.componentsProvider)
     }
 
-    companion object {
+    class Config {
 
-        private var ERROR_LOGGING = false
-
-        fun enableErrorLogging() {
-            ERROR_LOGGING = true
-        }
-
-        fun disableErrorLogging() {
-            ERROR_LOGGING = false
-        }
-
-        private fun String.toExpressionParser(): ExpressionParser {
-            val inputStream = ByteArrayInputStream(toByteArray(StandardCharsets.UTF_8))
-            val charStream = CharStreams.fromStream(inputStream, StandardCharsets.UTF_8)
-            val lexer = ExpressionLexer(charStream).apply {
-                if (!ERROR_LOGGING) removeErrorListener(ConsoleErrorListener.INSTANCE)
-            }
-            val tokens = CommonTokenStream(lexer)
-            return ExpressionParser(tokens)
-        }
-
-        private class ExpressionErrorListener : ANTLRErrorListener {
-
-            val errorMessages: MutableList<String> = mutableListOf()
-
-            override fun syntaxError(
-                recognizer: Recognizer<*, *>,
-                offendingSymbol: Any,
-                line: Int,
-                charPositionInLine: Int,
-                msg: String?,
-                e: RecognitionException?
-            ) {
-                errorMessages.add(msg.orEmpty())
-            }
-
-            override fun reportAmbiguity(
-                recognizer: Parser?,
-                dfa: DFA?,
-                startIndex: Int,
-                stopIndex: Int,
-                exact: Boolean,
-                ambigAlts: BitSet?,
-                configs: ATNConfigSet?
-            ) = Unit
-
-            override fun reportAttemptingFullContext(
-                recognizer: Parser?,
-                dfa: DFA?,
-                startIndex: Int,
-                stopIndex: Int,
-                conflictingAlts: BitSet?,
-                configs: ATNConfigSet?
-            ) = Unit
-
-            override fun reportContextSensitivity(
-                recognizer: Parser?,
-                dfa: DFA?,
-                startIndex: Int,
-                stopIndex: Int,
-                prediction: Int,
-                configs: ATNConfigSet?
-            ) = Unit
-
-            fun hasErrors(): Boolean = errorMessages.any()
-
-
-        }
-
-        private val lazyManager: ResettableLazyManager by lazy { ResettableLazyManager() }
-
-        private val standardOperatorList: List<Operator> by lazy {
-            listOf(
+        private val standardOperatorList: MutableList<Operator> by lazy {
+            mutableListOf(
                 Arithmetic.ADDITION,                // +
                 Arithmetic.SUBTRACTION,             // -
                 Arithmetic.PRODUCT,                 // *
@@ -140,8 +73,8 @@ class Xpression(private val expression: String) {
             )
         }
 
-        private val standardFunctionsList: List<Function> by lazy {
-            listOf(
+        private val standardFunctionsList: MutableList<Function> by lazy {
+            mutableListOf(
 //                // logic
                 Logic.AND,
                 Logic.OR,
@@ -179,19 +112,29 @@ class Xpression(private val expression: String) {
 
         private val customFunctionList = mutableListOf<Function>()
 
-        private val COMPONENTS_PROVIDER by resettableLazy(lazyManager) {
+        internal val componentsProvider by lazy {
             Provider.Builder()
                 .addOperator(*standardOperatorList.toTypedArray())
                 .addFunction(*standardFunctionsList.toTypedArray())
                 .addFunction(*customFunctionList.toTypedArray())
+                .build()
+        }
+
+        internal var errorLogging: Boolean = false
+
+        fun enableErrorLogging() {
+            errorLogging = true
+        }
+
+        fun disableErrorLogging() {
+            errorLogging = false
         }
 
         /**
          * Removes all custom function implementations
          */
-        @Synchronized fun reset() {
+        fun reset() {
             customFunctionList.clear()
-            lazyManager.reset()
         }
 
         /**
@@ -202,11 +145,82 @@ class Xpression(private val expression: String) {
         }
 
         /**
-         * Return default implementation for function
+         * Overrides default implementation for function
          */
-        fun getDefaultFunction(functionName: String): Function? {
-            return standardFunctionsList.find { it.name == functionName }
+        fun overrideFunction(vararg function: Function) {
+            function.forEach { newFunction ->
+                standardFunctionsList.removeAll { it.name == newFunction.name }
+                standardFunctionsList.add(newFunction)
+            }
         }
+
+        /**
+         * Overrides default implementation for operator
+         */
+        fun overrideOperator(vararg operator: Operator) {
+            operator.forEach { new ->
+                standardOperatorList.removeAll { it.name == new.name }
+                standardOperatorList.add(new)
+            }
+        }
+    }
+
+    private fun String.toExpressionParser(): XpressionParser {
+        val inputStream = ByteArrayInputStream(toByteArray(StandardCharsets.UTF_8))
+        val charStream = CharStreams.fromStream(inputStream, StandardCharsets.UTF_8)
+        val lexer = XpressionLexer(charStream).apply {
+            if (!config.errorLogging) removeErrorListener(ConsoleErrorListener.INSTANCE)
+        }
+        val tokens = CommonTokenStream(lexer)
+        return XpressionParser(tokens)
+    }
+
+    private class ExpressionErrorListener : ANTLRErrorListener {
+
+        val errorMessages: MutableList<String> = mutableListOf()
+
+        override fun syntaxError(
+            recognizer: Recognizer<*, *>,
+            offendingSymbol: Any,
+            line: Int,
+            charPositionInLine: Int,
+            msg: String?,
+            e: RecognitionException?
+        ) {
+            errorMessages.add(msg.orEmpty())
+        }
+
+        override fun reportAmbiguity(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            exact: Boolean,
+            ambigAlts: BitSet?,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        override fun reportAttemptingFullContext(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            conflictingAlts: BitSet?,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        override fun reportContextSensitivity(
+            recognizer: Parser?,
+            dfa: DFA?,
+            startIndex: Int,
+            stopIndex: Int,
+            prediction: Int,
+            configs: ATNConfigSet?
+        ) = Unit
+
+        fun hasErrors(): Boolean = errorMessages.any()
+
+
     }
 
     sealed class XpressionElement {
@@ -224,31 +238,39 @@ class Xpression(private val expression: String) {
         open class Identifier(val name: String) : XpressionElement()
     }
 
-    sealed class Result : XpressionElement() {
+    sealed class Result(val value: Any?) : XpressionElement() {
 
-        class Value(val value: Any?, val type: DataType) : Result() {
-            constructor(number: Number) : this(value = number, DataType.Number)
-            constructor(string: String) : this(value = string, DataType.Text)
-            constructor(boolean: Boolean) : this(value = boolean, DataType.Boolean)
+        class Value(val type: DataType, value: Any?) : Result(value = value) {
+            constructor(number: Number) : this(DataType.Number, number)
+            constructor(string: String) : this(DataType.Text, string)
+            constructor(boolean: Boolean) : this(DataType.Boolean, boolean)
         }
 
-        class Error(val error: String) : Result()
+        class Error(val error: String, throwable: Throwable? = null) : Result(throwable)
 
-        val hasError: Boolean by lazy { this is Error }
+        val isError: Boolean by lazy { this is Error }
+        val message: String? by lazy { (this as? Error)?.error }
 
-        val hasValue: Boolean by lazy { this is Value }
+        val isNumber: Boolean by lazy { if (isError) false else (this as Value).value is Number }
+        val asNumber: Number by lazy { (this as Value).value as Number }
 
-        val isNull: Boolean by lazy { this is Value && this.type == DataType.None }
+        val isString: Boolean by lazy { if (isError) false else (this as Value).value is String }
+        val asString: String by lazy { (this as Value).value as String }
+
+        val isBoolean: Boolean by lazy { if (isError) false else (this as Value).value is Boolean }
+        val asBoolean: Boolean by lazy { (this as Value).value as Boolean }
+
+        val isNull: Boolean by lazy { this is Value && type == DataType.None }
 
         override fun toString(): String {
-            if (this is Error) return error
+            if (isError) return value.toString()
             this as Value
             return "$type($value)"
         }
 
         companion object {
-            fun anyErrors(vararg results: Result): Result? = results.firstOrNull { it.hasError }
-            fun nullValue() = Value(null, DataType.None)
+            fun anyErrors(vararg results: Result): Result? = results.firstOrNull { it.isError }
+            fun nullValue() = Value(DataType.None, null)
         }
     }
 }

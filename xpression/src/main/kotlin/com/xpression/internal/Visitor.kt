@@ -4,7 +4,7 @@ import com.xpression.Xpression.*
 import com.xpression.XpressionContext
 import com.xpression.internal.Converter.toNegativeNumber
 import com.xpression.internal.Converter.toPositiveNumber
-import com.xpression.internal.ExpressionParser.*
+import com.xpression.internal.XpressionParser.*
 import com.xpression.internal.operator.Operator.Companion.TERNARY_OPERATOR
 import org.antlr.v4.runtime.tree.ParseTree
 import org.apache.commons.text.StringEscapeUtils
@@ -12,7 +12,7 @@ import org.apache.commons.text.StringEscapeUtils
 internal class Visitor(
     private val context: XpressionContext,
     private val provider: Provider
-) : ExpressionBaseVisitor<XpressionElement>() {
+) : XpressionBaseVisitor<XpressionElement>() {
 
     override fun visit(tree: ParseTree?): XpressionElement = super.visit(tree)
 

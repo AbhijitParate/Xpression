@@ -17,25 +17,23 @@ open class BaseXpressionTest {
     protected fun evaluateError(expression: String) {
         val r = evaluate(expression)
         assert(r is Result.Error) {
-            r.javaClass.simpleName
+            "Expected: Error, Received: Value(${r.value?.javaClass?.simpleName.orEmpty()})"
         }
-        println((r as Result.Error).error)
+        println(r.message)
     }
 
     protected fun evaluate(expression: String, result: Any?) {
         val r = evaluate(expression)
-        assert(r is Result.Value) {
-            r.toString()
-        }
+        assert(r is Result.Value) { r.toString() }
         r as Result.Value
         Assertions.assertEquals(result, r.value)
     }
 
-    protected fun evaluate(xpression: Xpression) : XpressionElement {
+    protected fun evaluate(xpression: Xpression) : Result {
         return xpression.evaluate(context)
     }
 
-    protected fun evaluate(expression: String) : XpressionElement {
+    protected fun evaluate(expression: String) : Result {
         val xpression = Xpression(expression)
         return xpression.evaluate(context)
     }

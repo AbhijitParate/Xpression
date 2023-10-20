@@ -4,7 +4,7 @@ import com.xpression.Xpression.*
 import com.xpression.XpressionContext
 import com.xpression.internal.Component
 import com.xpression.internal.DataType
-import com.xpression.internal.ExpressionParser.FunctionContext
+import com.xpression.internal.XpressionParser.FunctionContext
 import com.xpression.internal.Visitor
 
 abstract class Function(
@@ -42,7 +42,7 @@ abstract class Function(
      *  > Returns Result.Error on failure
      */
     protected open fun validate(argument: Result): Result? {
-        if (argument.hasError) return argument as Result.Error
+        if (argument.isError) return argument as Result.Error
         return null
     }
 

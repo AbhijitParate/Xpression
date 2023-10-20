@@ -50,7 +50,7 @@ abstract class Operator(final override val name: String, final override val argu
     }
 
     override fun validateArguments(vararg arguments: Result): Result? {
-        return arguments.firstOrNull { it.hasError }
+        return arguments.firstOrNull { it.isError }
     }
 
     /**

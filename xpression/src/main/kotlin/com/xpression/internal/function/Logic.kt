@@ -86,7 +86,7 @@ object Logic {
                         )
                     )
                 }
-                return Result.Value(result!!)
+                return Result.Value(result)
             }
         }
     }

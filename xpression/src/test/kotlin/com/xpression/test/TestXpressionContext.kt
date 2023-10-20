@@ -17,7 +17,7 @@ class TestXpressionContext : XpressionContext() {
         val value = map[property.name] ?: run {
             return Result.nullValue()
         }
-        return Result.Value(value, value.type())
+        return Result.Value(value.type(), value)
     }
 
     private fun Any?.type(): DataType {

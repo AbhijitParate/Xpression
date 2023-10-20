@@ -1,4 +1,8 @@
-grammar Expression;
+grammar Xpression;
+
+options {
+    tokenVocab=XpressionLexer;
+}
 
 // provides entry point for all kind of expressions
 root
@@ -11,9 +15,9 @@ expression
     ;
 
 scope
-    : '(' infixExpression ')'           #roundBracketExpression
-    | '[' infixExpression ']'           #squareBracketExpression
-    | '{' infixExpression '}'           #curlyBracketExpression
+    : LRB infixExpression RRB           #roundBracketExpression
+    | LSB infixExpression RSB           #squareBracketExpression
+    | LCB infixExpression RCB           #curlyBracketExpression
 //    | '<' infixExpression '>'           #angleBracketExpression
     ;
 
@@ -23,7 +27,7 @@ infixExpression
     ;
 
 ternary
-    : logical '?' logical ':' logical   #ternaryExpression
+    : logical QUE logical COLON logical   #ternaryExpression
     ;
 
 logical
@@ -88,7 +92,7 @@ operation
     ;
 
 accessor
-    : special=('$'|'#'|'@')? property ( ACCESSOR property )*
+    : special=(DOLLOR|HASH|AT)? property ( ACCESSOR property )*
                                         #objectAccessor
     // TODO: Do we need this? What's the usecase?
 //    | function ( PROPERTY_ACCESSOR property )*
@@ -97,12 +101,12 @@ accessor
 
 property
     : identifier                        #propertyAccessor
-    | identifier '[' index=expression ']'
+    | identifier LSB index=expression LSB
                                         #subscriptAccessor
     ;
 
 function
-    : functionName=identifier '(' (expression (',' expression)*)? ')'
+    : functionName=identifier LRB (expression (COMMA expression)*)? RRB
     ;
 
 identifier
@@ -120,74 +124,3 @@ number
     : NUMBER                            #positiveNumber
     | SUB NUMBER                        #negativeNumber
     ;
-
-TEXT
-    : DQUOTE (~["] | '\\"')* DQUOTE
-    | SQUOTE (~[']        )* SQUOTE
-    ;
-
-NUMBER
-    : [0-9]+('.'?[0-9]+)? ;
-
-NULL
-    : [Nn][Uu][Ll][Ll]
-    ;
-
-BOOLEAN
-    : [Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]
-    ;
-
-/* Identifier must starts with a-z or A-Z or _ followed by a-z A-Z or _ or 0-9 */
-IDENTIFIER
-    : VALID_ID_START VALID_ID_CHAR*
-    ;
-
-fragment VALID_ID_START
-    : ('a' .. 'z')
-    | ('A' .. 'Z')
-    | '_'
-    ;
-
-fragment VALID_ID_CHAR
-    :  ('a' .. 'z')
-    | ('A' .. 'Z')
-    | ('0' .. '9')
-    | '_'
-    ;
-
-SQUOTE      : '\''      ;
-DQUOTE      : '"'       ;
-
-/* Accessor */
-ACCESSOR    : '.'       ;
-
-/* Concatinate operator */
-CONCATINATOR : '&'       ;
-
-/* Arithmatic operators */
-ADD         : '+'       ;
-SUB         : '-' ;
-MUL         : '*'       ;
-DIV         : '/'       ;
-MOD         : '%'       ;
-POW         : '^'       ;
-
-/* Logical operators */
-AND         : '&&'      ;
-OR          : '||'      ;
-NOT         : '!'       ;
-
-/*  Comparison operators */
-GT          : '>'       ;
-GE          : '>='      ;
-LT          : '<'       ;
-LE          : '<='      ;
-EQ          : '=='      ;
-NEQ         : '!='      ;
-
-/* ignore all white space characters */
-WS  :   (SPACE | '\t' | '\r'| '\n' | '\u000C' ) -> skip ;
-
-// todo : Add comments to hiddent channel
-
-fragment SPACE : ' ' ;
